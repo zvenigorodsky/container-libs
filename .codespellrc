@@ -2,10 +2,10 @@
 [codespell]
 
 # Comma-separated list of files to skip.
-skip = ./vendor,./.git #,bin,vendor,.git,go.sum,changelog.txt,.cirrus.yml,"RELEASE_NOTES.md,*.xz,*.gz,*.tar,*.tgz,bin2img,*ico,*.png,*.1,*.5,copyimg,*.orig,apidoc.go"
+skip = ./.git,./image/signature/fixtures,./image/signature/simplesigning/testdata,./storage/tests/tools/vendor,./storage/AUTHORS
 
 # Comma separated list of words to be ignored. Words must be lowercased.
-ignore-words-list = clos,creat,ro,hastable,shouldnot,mountns,passt
+ignore-words-list = clos,creat,ro,hastable,shouldnot,mountns,passt,te,bu,afile,flate,prevend,Plack,worl
 
 # Custom dictionary file that contains spelling corrections.
 # Run with option '--dictionary=-' to include also default dictionary.

@@ -345,18 +345,6 @@ storage_gofix_task:
       # gofix anyway.
       git diff --diff-filter=M --exit-code -- . ":(exclude)*.crt" ":(exclude)*.key" ":(exclude)*.cert"
 
-storage_codespell_task:
-    only_if: *only_if_storage
-    alias: storage_codespell
-    name: "Storage: codespell"
-    container:
-        image: python
-    build_script: pip install codespell
-    test_script: |
-      cd storage
-      codespell
-
-
 # Status aggregator for all tests.  This task simply ensures a defined
 # set of tasks all passed, and allows confirming that based on the status
 # of this task.
@@ -372,7 +360,6 @@ success_task:
         - images_timestamp_update
         - storage_cross
         - storage_gofix
-        - storage_codespell
         - common_testing
         - image_validate
         - image_cross

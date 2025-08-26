@@ -14,11 +14,8 @@ env:
   LINT_VERSION: v2.1.6
 
 jobs:
-  common-codespell:
+  codespell:
     runs-on: ubuntu-24.04
-    defaults:
-      run:
-        working-directory: ./common
     steps:
     - uses: actions/checkout@v4
     - name: install deps
@@ -26,6 +23,7 @@ jobs:
       run: pip install --break-system-packages codespell==v2.3.0
     - name: run codespell
       run: codespell --dictionary=-
+
   common-lint:
     runs-on: ubuntu-24.04
     defaults:
