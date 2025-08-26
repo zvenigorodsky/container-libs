@@ -39,11 +39,7 @@ If you want to see what the library can do, or an example of how it is called,
 consider starting with the [skopeo](https://github.com/containers/skopeo) tool
 instead.
 
-To integrate this library into your project, include it as a [Go module],
-put it into `$GOPATH` or use your preferred vendoring tool to include a copy
-in your project. Ensure that the dependencies documented [in go.mod][go.mod]
-are also available (using those exact versions or different versions of
-your choosing).
+To integrate this library into your project, include it as a [Go module].
 
 This library also depends on some C libraries. Either install them:
 ```sh
@@ -53,15 +49,14 @@ macOS$ brew install gpgme
 or use the build tags described below to avoid the dependencies (e.g. using `go build -tags …`)
 
 [Go module]: https://github.com/golang/go/wiki/Modules
-[go.mod]: https://github.com/containers/image/blob/master/go.mod
 
 ### Supported build tags
 
-- `containers_image_docker_daemon_stub`: Don’t import the `docker-daemon:` transport in `github.com/containers/image/transports/alltransports`, to decrease the amount of required dependencies.  Use a stub which reports that the transport is not supported instead.
+- `containers_image_docker_daemon_stub`: Don’t import the `docker-daemon:` transport in `go.podman.io/image/v5/transports/alltransports`, to decrease the amount of required dependencies.  Use a stub which reports that the transport is not supported instead.
 - `containers_image_openpgp`: Use a Golang-only OpenPGP implementation for signature verification instead of the default cgo/gpgme-based implementation;
 the primary downside is that creating new signatures with the Golang-only implementation is not supported.
 - `containers_image_sequoia`: Use Sequoia-PGP for signature verification instead of the default cgo/gpgme-based or the Golang-only OpenPGP implementations, and enable the `signature/simplesequoia` subpackage. This requires a support shared library installed on the system. Install https://github.com/ueno/podman-sequoia , and potentially update build configuration to point at it (compare `SEQUOIA_SONAME_DIR` in `Makefile`).
-- `containers_image_storage_stub`: Don’t import the `containers-storage:` transport in `github.com/containers/image/transports/alltransports`, to decrease the amount of required dependencies.  Use a stub which reports that the transport is not supported instead.
+- `containers_image_storage_stub`: Don’t import the `containers-storage:` transport in `go.podman.io/image/v5/transports/alltransports`, to decrease the amount of required dependencies.  Use a stub which reports that the transport is not supported instead.
 
 ## [Contributing](CONTRIBUTING.md)
 

@@ -30,7 +30,7 @@ if [[ "$1" == "--config" ]]; then
     in_get_ci_vm "$1"
     cat <<EOF
 DESTDIR="/var/tmp/go/src/github.com/containers/image"
-UPSTREAM_REPO="https://github.com/containers/image.git"
+UPSTREAM_REPO="https://github.com/containers/container-libs.git"
 CI_ENVFILE="/etc/ci_environment"
 GCLOUD_PROJECT="skopeo"
 GCLOUD_IMGPROJECT="libpod-218412"

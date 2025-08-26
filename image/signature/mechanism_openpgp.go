@@ -112,13 +112,13 @@ func (m *openpgpSigningMechanism) importKeysFromBytes(blob []byte) ([]string, er
 
 // SupportsSigning returns nil if the mechanism supports signing, or a SigningNotSupportedError.
 func (m *openpgpSigningMechanism) SupportsSigning() error {
-	return SigningNotSupportedError("signing is not supported in github.com/containers/image built with the containers_image_openpgp build tag")
+	return SigningNotSupportedError("signing is not supported in go.podman.io/image built with the containers_image_openpgp build tag")
 }
 
 // Sign creates a (non-detached) signature of input using keyIdentity.
 // Fails with a SigningNotSupportedError if the mechanism does not support signing.
 func (m *openpgpSigningMechanism) SignWithPassphrase(input []byte, keyIdentity string, passphrase string) ([]byte, error) {
-	return nil, SigningNotSupportedError("signing is not supported in github.com/containers/image built with the containers_image_openpgp build tag")
+	return nil, SigningNotSupportedError("signing is not supported in go.podman.io/image built with the containers_image_openpgp build tag")
 }
 
 // Sign creates a (non-detached) signature of input using keyIdentity.

@@ -12,7 +12,7 @@ BUILD_TAGS_DARWIN_CROSS = containers_image_openpgp
 SEQUOIA_SONAME_DIR =
 
 BUILDTAGS =
-BUILDFLAGS := -tags "$(BUILDTAGS)" -ldflags '-X github.com/containers/image/v5/signature/internal/sequoia.sequoiaLibraryDir='"$(SEQUOIA_SONAME_DIR)"
+BUILDFLAGS := -tags "$(BUILDTAGS)" -ldflags '-X go.podman.io/image/v5/signature/internal/sequoia.sequoiaLibraryDir='"$(SEQUOIA_SONAME_DIR)"
 
 # Extra flags passed to go test
 TESTFLAGS :=
@@ -109,7 +109,7 @@ lint:
 .PHONY: .gitvalidation
 .gitvalidation:
 	@which $(GOBIN)/git-validation > /dev/null 2>/dev/null || (echo "ERROR: git-validation not found. Consider 'make clean && make tools'" && false)
-	git fetch -q "https://github.com/containers/image.git" "refs/heads/main"
+	git fetch -q "https://github.com/containers/container-libs.git" "refs/heads/main"
 	upstream="$$(git rev-parse --verify FETCH_HEAD)" ; \
 		$(GOBIN)/git-validation -q -run DCO,short-subject,dangling-whitespace -range $$upstream..HEAD
 
