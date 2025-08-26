@@ -46,7 +46,9 @@ while [[ $retries -le $max_retries ]]; do
 
     retries=$((retries + 1))
     if [[ $retries -ge $max_retries ]]; then
-        echo "Failed to wait for the database to become ready"
+        echo "Failed to wait for the database to become ready, logs:"
+        echo "$out"
+        podman ps
         podman pod rm -f -t0 $POD_NAME
         exit 1
     fi
