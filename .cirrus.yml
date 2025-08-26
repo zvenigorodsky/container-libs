@@ -58,7 +58,7 @@ env:
 gcp_credentials: ENCRYPTED[f448b0e5ed38a52ba93550305f9e38c9b0c03852b9fc3115930f231fc7124b7423e8c912b4d9e002cc34b3a7ac3c145b]
 
 # Default timeout for each task
-timeout_in: 120m
+timeout_in: 20m
 
 # Default VM to use unless set or modified by task
 gce_instance:
