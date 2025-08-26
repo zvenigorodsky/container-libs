@@ -7,10 +7,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/containers/image/v5/internal/multierr"
-	"github.com/containers/image/v5/internal/private"
-	"github.com/containers/image/v5/manifest"
 	digest "github.com/opencontainers/go-digest"
+	"go.podman.io/image/v5/internal/multierr"
+	"go.podman.io/image/v5/internal/private"
+	"go.podman.io/image/v5/manifest"
 )
 
 func (pr *prSignedBy) isSignatureAuthorAccepted(ctx context.Context, image private.UnparsedImage, sig []byte) (signatureAcceptanceResult, *Signature, error) {

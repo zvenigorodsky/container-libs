@@ -7,13 +7,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/containers/image/v5/docker/reference"
-	internalSig "github.com/containers/image/v5/internal/signature"
-	internalSigner "github.com/containers/image/v5/internal/signer"
-	"github.com/containers/image/v5/signature"
 	"github.com/opencontainers/go-digest"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.podman.io/image/v5/docker/reference"
+	internalSig "go.podman.io/image/v5/internal/signature"
+	internalSigner "go.podman.io/image/v5/internal/signer"
+	"go.podman.io/image/v5/signature"
 )
 
 const (

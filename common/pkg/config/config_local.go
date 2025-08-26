@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/containers/storage/pkg/fileutils"
 	units "github.com/docker/go-units"
+	"go.podman.io/storage/pkg/fileutils"
 	"tags.cncf.io/container-device-interface/pkg/parser"
 )
 

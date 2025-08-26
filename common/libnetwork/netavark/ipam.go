@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/containers/common/libnetwork/types"
-	"github.com/containers/common/libnetwork/util"
 	"go.etcd.io/bbolt"
 	boltErrors "go.etcd.io/bbolt/errors"
+	"go.podman.io/common/libnetwork/types"
+	"go.podman.io/common/libnetwork/util"
 )
 
 // IPAM boltdb structure

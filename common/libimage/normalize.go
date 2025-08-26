@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/containers/image/v5/docker/reference"
 	"github.com/sirupsen/logrus"
+	"go.podman.io/image/v5/docker/reference"
 )
 
 // NormalizeName normalizes the provided name according to the conventions by

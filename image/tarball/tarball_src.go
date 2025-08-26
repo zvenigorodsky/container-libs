@@ -12,14 +12,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/containers/image/v5/internal/imagesource/impl"
-	"github.com/containers/image/v5/internal/imagesource/stubs"
-	"github.com/containers/image/v5/pkg/compression"
-	compressionTypes "github.com/containers/image/v5/pkg/compression/types"
-	"github.com/containers/image/v5/types"
 	digest "github.com/opencontainers/go-digest"
 	imgspecs "github.com/opencontainers/image-spec/specs-go"
 	imgspecv1 "github.com/opencontainers/image-spec/specs-go/v1"
+	"go.podman.io/image/v5/internal/imagesource/impl"
+	"go.podman.io/image/v5/internal/imagesource/stubs"
+	"go.podman.io/image/v5/pkg/compression"
+	compressionTypes "go.podman.io/image/v5/pkg/compression/types"
+	"go.podman.io/image/v5/types"
 )
 
 type tarballImageSource struct {

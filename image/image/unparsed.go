@@ -1,11 +1,11 @@
 package image
 
 import (
-	"github.com/containers/image/v5/internal/image"
-	"github.com/containers/image/v5/internal/private"
-	"github.com/containers/image/v5/internal/unparsedimage"
-	"github.com/containers/image/v5/types"
 	"github.com/opencontainers/go-digest"
+	"go.podman.io/image/v5/internal/image"
+	"go.podman.io/image/v5/internal/private"
+	"go.podman.io/image/v5/internal/unparsedimage"
+	"go.podman.io/image/v5/types"
 )
 
 // UnparsedImage implements types.UnparsedImage .

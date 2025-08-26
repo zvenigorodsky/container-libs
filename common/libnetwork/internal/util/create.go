@@ -3,8 +3,8 @@ package util
 import (
 	"fmt"
 
-	"github.com/containers/common/libnetwork/types"
 	"github.com/sirupsen/logrus"
+	"go.podman.io/common/libnetwork/types"
 )
 
 func CommonNetworkCreate(n NetUtil, network *types.Network) error {

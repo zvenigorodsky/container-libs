@@ -9,9 +9,9 @@ import (
 	"os"
 	"slices"
 
-	internalutil "github.com/containers/common/libnetwork/internal/util"
-	"github.com/containers/common/libnetwork/types"
 	"github.com/sirupsen/logrus"
+	internalutil "go.podman.io/common/libnetwork/internal/util"
+	"go.podman.io/common/libnetwork/types"
 )
 
 func (n *cniNetwork) NetworkUpdate(_ string, _ types.NetworkUpdateOptions) error {

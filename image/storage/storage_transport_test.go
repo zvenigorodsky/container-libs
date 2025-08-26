@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/containers/image/v5/docker/reference"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.podman.io/image/v5/docker/reference"
 )
 
 const (

@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	graphdriver "github.com/containers/storage/drivers"
 	"github.com/stretchr/testify/assert"
+	graphdriver "go.podman.io/storage/drivers"
 )
 
 const jsonTOC = `

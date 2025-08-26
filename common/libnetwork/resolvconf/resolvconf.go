@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/containers/storage/pkg/regexp"
 	"github.com/sirupsen/logrus"
+	"go.podman.io/storage/pkg/regexp"
 )
 
 const (

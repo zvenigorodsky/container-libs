@@ -6,8 +6,8 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/containers/common/pkg/capabilities"
 	"github.com/spf13/cobra"
+	"go.podman.io/common/pkg/capabilities"
 )
 
 // FlagCompletions - hold flag completion functions to be applied later with CompleteCommandFlags()

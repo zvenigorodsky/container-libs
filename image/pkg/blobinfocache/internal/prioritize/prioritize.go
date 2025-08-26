@@ -7,12 +7,12 @@ import (
 	"slices"
 	"time"
 
-	"github.com/containers/image/v5/internal/blobinfocache"
-	"github.com/containers/image/v5/internal/manifest"
-	"github.com/containers/image/v5/pkg/compression"
-	"github.com/containers/image/v5/types"
 	"github.com/opencontainers/go-digest"
 	"github.com/sirupsen/logrus"
+	"go.podman.io/image/v5/internal/blobinfocache"
+	"go.podman.io/image/v5/internal/manifest"
+	"go.podman.io/image/v5/pkg/compression"
+	"go.podman.io/image/v5/types"
 )
 
 // replacementAttempts is the number of blob replacement candidates with known location returned by destructivelyPrioritizeReplacementCandidates,

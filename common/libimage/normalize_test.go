@@ -5,9 +5,9 @@ package libimage
 import (
 	"testing"
 
-	lplatform "github.com/containers/common/libimage/platform"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	lplatform "go.podman.io/common/libimage/platform"
 )
 
 func TestNormalizePlatform(t *testing.T) {

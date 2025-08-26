@@ -3,8 +3,8 @@ package auth
 import (
 	"io"
 
-	"github.com/containers/common/pkg/completion"
 	"github.com/spf13/pflag"
+	"go.podman.io/common/pkg/completion"
 )
 
 // LoginOptions represents common flags in login

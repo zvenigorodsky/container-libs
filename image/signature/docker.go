@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/containers/image/v5/docker/reference"
-	"github.com/containers/image/v5/manifest"
-	"github.com/containers/image/v5/signature/internal"
 	"github.com/opencontainers/go-digest"
+	"go.podman.io/image/v5/docker/reference"
+	"go.podman.io/image/v5/manifest"
+	"go.podman.io/image/v5/signature/internal"
 )
 
 // SignOptions includes optional parameters for signing container images.

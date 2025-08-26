@@ -4,9 +4,9 @@ import (
 	"io"
 	"time"
 
-	drivers "github.com/containers/storage/drivers"
-	"github.com/containers/storage/pkg/archive"
 	digest "github.com/opencontainers/go-digest"
+	drivers "go.podman.io/storage/drivers"
+	"go.podman.io/storage/pkg/archive"
 )
 
 // The type definitions in this file exist ONLY to maintain formal API compatibility.

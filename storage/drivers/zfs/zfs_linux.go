@@ -3,8 +3,8 @@ package zfs
 import (
 	"fmt"
 
-	graphdriver "github.com/containers/storage/drivers"
 	"github.com/sirupsen/logrus"
+	graphdriver "go.podman.io/storage/drivers"
 	"golang.org/x/sys/unix"
 )
 

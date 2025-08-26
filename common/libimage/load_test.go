@@ -7,8 +7,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/containers/image/v5/transports/alltransports"
 	"github.com/stretchr/testify/require"
+	"go.podman.io/image/v5/transports/alltransports"
 )
 
 func TestLoadByPath(t *testing.T) {

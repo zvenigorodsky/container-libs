@@ -3,7 +3,7 @@
 package signature
 
 import (
-	"github.com/containers/image/v5/signature/internal/sequoia"
+	"go.podman.io/image/v5/signature/internal/sequoia"
 )
 
 // A GPG/OpenPGP signing mechanism, implemented using Sequoia and only supporting verification.

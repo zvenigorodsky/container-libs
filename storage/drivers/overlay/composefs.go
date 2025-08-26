@@ -14,10 +14,10 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/containers/storage/pkg/chunked/dump"
-	"github.com/containers/storage/pkg/fsverity"
-	"github.com/containers/storage/pkg/loopback"
 	"github.com/sirupsen/logrus"
+	"go.podman.io/storage/pkg/chunked/dump"
+	"go.podman.io/storage/pkg/fsverity"
+	"go.podman.io/storage/pkg/loopback"
 	"golang.org/x/sys/unix"
 )
 

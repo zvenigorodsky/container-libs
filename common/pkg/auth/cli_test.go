@@ -3,8 +3,8 @@ package auth
 import (
 	"testing"
 
-	"github.com/containers/common/pkg/completion"
 	"github.com/spf13/pflag"
+	"go.podman.io/common/pkg/completion"
 )
 
 func testFlagCompletion(t *testing.T, flags *pflag.FlagSet, flagCompletions completion.FlagCompletions) {

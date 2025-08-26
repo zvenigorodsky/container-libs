@@ -8,13 +8,13 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/containers/common/libimage/filter"
-	registryTransport "github.com/containers/image/v5/docker"
-	"github.com/containers/image/v5/pkg/sysregistriesv2"
-	"github.com/containers/image/v5/transports/alltransports"
-	"github.com/containers/image/v5/types"
 	"github.com/hashicorp/go-multierror"
 	"github.com/sirupsen/logrus"
+	"go.podman.io/common/libimage/filter"
+	registryTransport "go.podman.io/image/v5/docker"
+	"go.podman.io/image/v5/pkg/sysregistriesv2"
+	"go.podman.io/image/v5/transports/alltransports"
+	"go.podman.io/image/v5/types"
 	"golang.org/x/sync/semaphore"
 )
 

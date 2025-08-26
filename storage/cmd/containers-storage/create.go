@@ -6,14 +6,14 @@ import (
 	"io"
 	"os"
 
-	"github.com/containers/storage"
-	graphdriver "github.com/containers/storage/drivers"
-	"github.com/containers/storage/internal/opts"
-	"github.com/containers/storage/pkg/idtools"
-	"github.com/containers/storage/pkg/mflag"
-	"github.com/containers/storage/pkg/stringid"
-	"github.com/containers/storage/types"
 	digest "github.com/opencontainers/go-digest"
+	"go.podman.io/storage"
+	graphdriver "go.podman.io/storage/drivers"
+	"go.podman.io/storage/internal/opts"
+	"go.podman.io/storage/pkg/idtools"
+	"go.podman.io/storage/pkg/mflag"
+	"go.podman.io/storage/pkg/stringid"
+	"go.podman.io/storage/types"
 )
 
 var (

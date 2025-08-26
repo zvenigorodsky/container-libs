@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/containers/image/v5/internal/signature"
 	"github.com/opencontainers/go-digest"
+	"go.podman.io/image/v5/internal/signature"
 )
 
 // NoSignaturesInitialize implements parts of private.ImageDestination

@@ -1,9 +1,9 @@
-go 1.23.0
+go 1.23.3
 
 // Warning: Ensure the "go" and "toolchain" versions match exactly to prevent unwanted auto-updates.
 // That generally means there should be no toolchain directive present.
+module go.podman.io/storage
 
-module github.com/containers/storage
 
 require (
 	github.com/BurntSushi/toml v1.5.0

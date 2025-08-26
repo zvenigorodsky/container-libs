@@ -13,12 +13,12 @@ import (
 	"syscall"
 	"time"
 
-	driversCopy "github.com/containers/storage/drivers/copy"
-	"github.com/containers/storage/pkg/archive"
-	"github.com/containers/storage/pkg/chunked/internal/minimal"
-	storagePath "github.com/containers/storage/pkg/chunked/internal/path"
 	securejoin "github.com/cyphar/filepath-securejoin"
 	"github.com/vbatts/tar-split/archive/tar"
+	driversCopy "go.podman.io/storage/drivers/copy"
+	"go.podman.io/storage/pkg/archive"
+	"go.podman.io/storage/pkg/chunked/internal/minimal"
+	storagePath "go.podman.io/storage/pkg/chunked/internal/path"
 	"golang.org/x/sys/unix"
 )
 

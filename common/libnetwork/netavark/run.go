@@ -9,9 +9,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/containers/common/libnetwork/internal/util"
-	"github.com/containers/common/libnetwork/types"
 	"github.com/sirupsen/logrus"
+	"go.podman.io/common/libnetwork/internal/util"
+	"go.podman.io/common/libnetwork/types"
 )
 
 type netavarkOptions struct {

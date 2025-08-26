@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"slices"
 
-	compressiontypes "github.com/containers/image/v5/pkg/compression/types"
 	"github.com/containers/libtrust"
 	digest "github.com/opencontainers/go-digest"
 	imgspecv1 "github.com/opencontainers/image-spec/specs-go/v1"
+	compressiontypes "go.podman.io/image/v5/pkg/compression/types"
 )
 
 // FIXME: Should we just use docker/distribution and docker/docker implementations directly?

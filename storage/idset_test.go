@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/containers/storage/pkg/idtools"
 	"github.com/google/go-intervals/intervalset"
+	"go.podman.io/storage/pkg/idtools"
 )
 
 func allIntervals(s *idSet) []interval {

@@ -8,7 +8,7 @@ package simplesequoia
 // not to require this indirection and all those unimplemented methods.
 
 import (
-	"github.com/containers/image/v5/signature/internal/sequoia"
+	"go.podman.io/image/v5/signature/internal/sequoia"
 )
 
 // A GPG/OpenPGP signing mechanism, implemented using Sequoia.

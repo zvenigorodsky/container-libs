@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/containers/common/pkg/secrets/define"
 	"github.com/stretchr/testify/require"
+	"go.podman.io/common/pkg/secrets/define"
 )
 
 const gpgTestID = "testing@passdriver"

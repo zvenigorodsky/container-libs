@@ -6,13 +6,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/containers/image/v5/internal/blobinfocache"
-	"github.com/containers/image/v5/pkg/compression"
-	compressiontypes "github.com/containers/image/v5/pkg/compression/types"
-	"github.com/containers/image/v5/types"
 	"github.com/opencontainers/go-digest"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.podman.io/image/v5/internal/blobinfocache"
+	"go.podman.io/image/v5/pkg/compression"
+	compressiontypes "go.podman.io/image/v5/pkg/compression/types"
+	"go.podman.io/image/v5/types"
 )
 
 const (

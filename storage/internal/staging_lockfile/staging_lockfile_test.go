@@ -9,9 +9,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/containers/storage/pkg/reexec"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.podman.io/storage/pkg/reexec"
 )
 
 func TestMain(m *testing.M) {

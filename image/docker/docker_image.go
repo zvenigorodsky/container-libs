@@ -9,12 +9,12 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/containers/image/v5/docker/reference"
-	"github.com/containers/image/v5/internal/image"
-	"github.com/containers/image/v5/manifest"
-	"github.com/containers/image/v5/types"
 	"github.com/opencontainers/go-digest"
 	"github.com/sirupsen/logrus"
+	"go.podman.io/image/v5/docker/reference"
+	"go.podman.io/image/v5/internal/image"
+	"go.podman.io/image/v5/manifest"
+	"go.podman.io/image/v5/types"
 )
 
 // Image is a Docker-specific implementation of types.ImageCloser with a few extra methods

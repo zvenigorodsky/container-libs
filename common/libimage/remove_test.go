@@ -7,8 +7,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/containers/common/pkg/config"
 	"github.com/stretchr/testify/require"
+	"go.podman.io/common/pkg/config"
 )
 
 func TestRemoveImages(t *testing.T) {

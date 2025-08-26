@@ -12,10 +12,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/containers/image/v5/internal/private"
-	"github.com/containers/image/v5/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.podman.io/image/v5/internal/private"
+	"go.podman.io/image/v5/types"
 )
 
 var _ private.ImageSource = (*dockerImageSource)(nil)

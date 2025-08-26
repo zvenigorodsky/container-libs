@@ -1,4 +1,4 @@
-module github.com/containers/common
+module go.podman.io/common
 
 // Warning: Ensure the "go" and "toolchain" versions match exactly to prevent unwanted auto-updates
 
@@ -11,9 +11,9 @@ require (
 	github.com/containerd/platforms v0.2.1
 	github.com/containernetworking/cni v1.3.0
 	github.com/containernetworking/plugins v1.7.1
-	github.com/containers/image/v5 v5.36.1
 	github.com/containers/ocicrypt v1.2.1
-	github.com/containers/storage v1.59.1
+	go.podman.io/image/v5 v5.36.1-0.20250820085751-a13b38f45723
+	go.podman.io/storage v1.59.1-0.20250820085751-a13b38f45723
 	github.com/coreos/go-systemd/v22 v22.6.0
 	github.com/cyphar/filepath-securejoin v0.4.1
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc

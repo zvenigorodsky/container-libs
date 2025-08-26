@@ -4,9 +4,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/containers/image/v5/internal/blobinfocache"
-	"github.com/containers/image/v5/pkg/blobinfocache/internal/test"
 	"github.com/stretchr/testify/require"
+	"go.podman.io/image/v5/internal/blobinfocache"
+	"go.podman.io/image/v5/pkg/blobinfocache/internal/test"
 )
 
 var _ blobinfocache.BlobInfoCache2 = &cache{}

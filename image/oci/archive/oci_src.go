@@ -6,15 +6,15 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/containers/image/v5/internal/imagesource"
-	"github.com/containers/image/v5/internal/imagesource/impl"
-	"github.com/containers/image/v5/internal/private"
-	"github.com/containers/image/v5/internal/signature"
-	ocilayout "github.com/containers/image/v5/oci/layout"
-	"github.com/containers/image/v5/types"
 	digest "github.com/opencontainers/go-digest"
 	imgspecv1 "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/sirupsen/logrus"
+	"go.podman.io/image/v5/internal/imagesource"
+	"go.podman.io/image/v5/internal/imagesource/impl"
+	"go.podman.io/image/v5/internal/private"
+	"go.podman.io/image/v5/internal/signature"
+	ocilayout "go.podman.io/image/v5/oci/layout"
+	"go.podman.io/image/v5/types"
 )
 
 // ImageNotFoundError is used when the OCI structure, in principle, exists and seems valid enough,

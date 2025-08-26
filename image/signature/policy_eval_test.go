@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/containers/image/v5/docker"
-	"github.com/containers/image/v5/docker/policyconfiguration"
-	"github.com/containers/image/v5/docker/reference"
-	"github.com/containers/image/v5/internal/private"
-	"github.com/containers/image/v5/internal/testing/mocks"
-	"github.com/containers/image/v5/transports"
-	"github.com/containers/image/v5/types"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.podman.io/image/v5/docker"
+	"go.podman.io/image/v5/docker/policyconfiguration"
+	"go.podman.io/image/v5/docker/reference"
+	"go.podman.io/image/v5/internal/private"
+	"go.podman.io/image/v5/internal/testing/mocks"
+	"go.podman.io/image/v5/transports"
+	"go.podman.io/image/v5/types"
 )
 
 func TestPolicyRequirementError(t *testing.T) {

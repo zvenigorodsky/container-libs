@@ -7,12 +7,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/containers/common/pkg/config"
-	"github.com/containers/image/v5/types"
-	"github.com/containers/storage"
-	"github.com/containers/storage/pkg/reexec"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.podman.io/common/pkg/config"
+	"go.podman.io/image/v5/types"
+	"go.podman.io/storage"
+	"go.podman.io/storage/pkg/reexec"
 )
 
 func TestMain(m *testing.M) {

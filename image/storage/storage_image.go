@@ -5,10 +5,10 @@ package storage
 import (
 	"context"
 
-	"github.com/containers/image/v5/internal/image"
-	"github.com/containers/image/v5/types"
-	"github.com/containers/storage"
 	digest "github.com/opencontainers/go-digest"
+	"go.podman.io/image/v5/internal/image"
+	"go.podman.io/image/v5/types"
+	"go.podman.io/storage"
 )
 
 var (

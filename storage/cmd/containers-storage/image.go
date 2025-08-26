@@ -5,9 +5,9 @@ import (
 	"io"
 	"os"
 
-	"github.com/containers/storage"
-	"github.com/containers/storage/pkg/mflag"
 	digest "github.com/opencontainers/go-digest"
+	"go.podman.io/storage"
+	"go.podman.io/storage/pkg/mflag"
 )
 
 var paramImageDataFile = ""

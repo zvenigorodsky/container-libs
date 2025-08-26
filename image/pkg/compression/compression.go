@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/containers/image/v5/pkg/compression/internal"
-	"github.com/containers/image/v5/pkg/compression/types"
-	"github.com/containers/storage/pkg/chunked/compressor"
 	"github.com/klauspost/pgzip"
 	"github.com/sirupsen/logrus"
 	"github.com/ulikunitz/xz"
+	"go.podman.io/image/v5/pkg/compression/internal"
+	"go.podman.io/image/v5/pkg/compression/types"
+	"go.podman.io/storage/pkg/chunked/compressor"
 )
 
 // Algorithm is a compression algorithm that can be used for CompressStream.

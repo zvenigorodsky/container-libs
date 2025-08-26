@@ -24,14 +24,14 @@ import (
 	"time"
 
 	"github.com/containernetworking/plugins/pkg/ns"
-	"github.com/containers/common/libnetwork/types"
-	"github.com/containers/common/pkg/netns"
-	"github.com/containers/storage/pkg/stringid"
-	"github.com/containers/storage/pkg/unshare"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/sirupsen/logrus"
 	"github.com/vishvananda/netlink"
+	"go.podman.io/common/libnetwork/types"
+	"go.podman.io/common/pkg/netns"
+	"go.podman.io/storage/pkg/stringid"
+	"go.podman.io/storage/pkg/unshare"
 	"golang.org/x/sys/unix"
 )
 

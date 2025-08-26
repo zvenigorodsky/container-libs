@@ -6,9 +6,9 @@ import (
 	"context"
 	"errors"
 
-	storage "github.com/containers/storage"
-	graphdriver "github.com/containers/storage/drivers"
 	digest "github.com/opencontainers/go-digest"
+	storage "go.podman.io/storage"
+	graphdriver "go.podman.io/storage/drivers"
 )
 
 // NewDiffer returns a differ than can be used with [Store.PrepareStagedLayer].

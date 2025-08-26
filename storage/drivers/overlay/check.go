@@ -10,14 +10,14 @@ import (
 	"path/filepath"
 	"syscall"
 
-	"github.com/containers/storage/pkg/archive"
-	"github.com/containers/storage/pkg/idmap"
-	"github.com/containers/storage/pkg/idtools"
-	"github.com/containers/storage/pkg/ioutils"
-	"github.com/containers/storage/pkg/mount"
-	"github.com/containers/storage/pkg/system"
-	"github.com/containers/storage/pkg/unshare"
 	"github.com/sirupsen/logrus"
+	"go.podman.io/storage/pkg/archive"
+	"go.podman.io/storage/pkg/idmap"
+	"go.podman.io/storage/pkg/idtools"
+	"go.podman.io/storage/pkg/ioutils"
+	"go.podman.io/storage/pkg/mount"
+	"go.podman.io/storage/pkg/system"
+	"go.podman.io/storage/pkg/unshare"
 	"golang.org/x/sys/unix"
 )
 

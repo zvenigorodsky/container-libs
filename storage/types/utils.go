@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/containers/storage/pkg/fileutils"
-	"github.com/containers/storage/pkg/homedir"
 	"github.com/sirupsen/logrus"
+	"go.podman.io/storage/pkg/fileutils"
+	"go.podman.io/storage/pkg/homedir"
 )
 
 func expandEnvPath(path string, rootlessUID int) (string, error) {

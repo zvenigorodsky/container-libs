@@ -9,10 +9,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/containers/image/v5/internal/private"
-	"github.com/containers/image/v5/internal/unparsedimage"
-	"github.com/containers/image/v5/types"
 	"github.com/sirupsen/logrus"
+	"go.podman.io/image/v5/internal/private"
+	"go.podman.io/image/v5/internal/unparsedimage"
+	"go.podman.io/image/v5/types"
 )
 
 // PolicyRequirementError is an explanatory text for rejecting a signature or an image.

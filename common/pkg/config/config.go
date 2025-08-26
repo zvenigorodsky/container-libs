@@ -10,14 +10,14 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/containers/common/internal/attributedstring"
-	"github.com/containers/common/libnetwork/types"
-	"github.com/containers/storage/pkg/fileutils"
-	"github.com/containers/storage/pkg/homedir"
-	"github.com/containers/storage/pkg/unshare"
 	units "github.com/docker/go-units"
 	selinux "github.com/opencontainers/selinux/go-selinux"
 	"github.com/sirupsen/logrus"
+	"go.podman.io/common/internal/attributedstring"
+	"go.podman.io/common/libnetwork/types"
+	"go.podman.io/storage/pkg/fileutils"
+	"go.podman.io/storage/pkg/homedir"
+	"go.podman.io/storage/pkg/unshare"
 )
 
 const (

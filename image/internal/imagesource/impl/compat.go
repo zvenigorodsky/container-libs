@@ -3,9 +3,9 @@ package impl
 import (
 	"context"
 
-	"github.com/containers/image/v5/internal/private"
-	"github.com/containers/image/v5/internal/signature"
 	"github.com/opencontainers/go-digest"
+	"go.podman.io/image/v5/internal/private"
+	"go.podman.io/image/v5/internal/signature"
 )
 
 // Compat implements the obsolete parts of types.ImageSource
