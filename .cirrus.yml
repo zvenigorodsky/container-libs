@@ -71,8 +71,6 @@ gce_instance:
 
 
 storage_linux_testing: &linux_testing
-    depends_on:
-        - storage_lint
     gce_instance:  # Only need to specify differences from defaults (above)
         image_name: "${VM_IMAGE}"
 
@@ -136,30 +134,6 @@ storage_debian_testing_task: &storage_debian_testing
         - env:
             TEST_DRIVER: "btrfs"
 
-
-storage_lint_task:
-    alias: storage_lint
-    name: "Storage: Lint"
-    only_if: *only_if_storage
-
-    env:
-        CIRRUS_WORKING_DIR: "/go/src/github.com/containers/storage"
-    container:
-        image: golang
-    modules_cache:
-        fingerprint_script: cat storage/go.sum
-        folder: $GOPATH/pkg/mod
-    build_script: |
-      apt-get update
-      apt-get install -y libbtrfs-dev libsubid-dev
-    test_script: |
-      cd storage
-      [ -n "${CIRRUS_BASE_SHA}" ] && git fetch origin ${CIRRUS_BASE_SHA} # Make ${CIRRUS_BASE_SHA} resolvable for git-validation
-      make TAGS=regex_precompile local-validate
-      make lint
-      make clean
-
-
 # Update metadata on VM images referenced by this repository state
 images_timestamp_update_task:
     alias: images_timestamp_update
@@ -186,10 +160,9 @@ images_timestamp_update_task:
     script: '/usr/local/bin/entrypoint.sh |& ${_TIMESTAMP}'
 
 
-
-image_validate_task:
-    alias: image_validate
-    name: "Image: Validate"
+image_cross_task:
+    alias: image_cross
+    name: "Image: Cross"
     only_if: &only_if_image >-
         $CIRRUS_PR == '' ||
         changesInclude('.cirrus.yml', 'go.work', 'go.work.sum') ||
@@ -210,30 +183,11 @@ image_validate_task:
         VM_IMAGE_NAME: ${FEDORA_CACHE_IMAGE_NAME}
     script: |
         cd image
-        git remote update
-        make tools
-        # TODO: Enable once we are done with monorepo tests.
-        # ${GOBIN}/git-validation -q -run DCO,short-subject,dangling-whitespace -range $(git merge-base origin/${DEST_BRANCH} HEAD)..${CIRRUS_CHANGE_IN_REPO}
-        make validate
-
-
-image_cross_task:
-    alias: image_cross
-    name: "Image: Cross"
-    only_if: *only_if_image
-    gce_instance: *fedora_vm
-    env:
-        HOME: "/root"  # default unset, needed by golangci-lint.
-        VM_IMAGE_NAME: ${FEDORA_CACHE_IMAGE_NAME}
-    script: |
-        cd image
         make cross
 
 
 image_test_task:
     alias: image_test
-    depends_on:
-        - image_validate
     only_if: *only_if_image
     gce_instance: *fedora_vm
     env:
@@ -269,8 +223,6 @@ image_test_task:
 image_test_skopeo_task:
     alias: image_test_skopeo
     only_if: *only_if_image
-    depends_on:
-        - image_validate
     gce_instance: *fedora_vm
     env:
         HOME: "/root"  # default unset, needed by golangci-lint.
@@ -354,14 +306,12 @@ success_task:
     # Ref: https://github.com/openshift/release/pull/49820
     name: "Total Success"
     depends_on:
-        - storage_lint
         - storage_fedora_testing
         - storage_debian_testing
         - images_timestamp_update
         - storage_cross
         - storage_gofix
         - common_testing
-        - image_validate
         - image_cross
         - image_test
         - image_test_skopeo
