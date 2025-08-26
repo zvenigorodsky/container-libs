@@ -39,11 +39,7 @@ If you want to see what the library can do, or an example of how it is called,
 consider starting with the [skopeo](https://github.com/containers/skopeo) tool
 instead.
 
-To integrate this library into your project, include it as a [Go module],
-put it into `$GOPATH` or use your preferred vendoring tool to include a copy
-in your project. Ensure that the dependencies documented [in go.mod][go.mod]
-are also available (using those exact versions or different versions of
-your choosing).
+To integrate this library into your project, include it as a [Go module].
 
 This library also depends on some C libraries. Either install them:
 ```sh
@@ -53,7 +49,6 @@ macOS$ brew install gpgme
 or use the build tags described below to avoid the dependencies (e.g. using `go build -tags …`)
 
 [Go module]: https://github.com/golang/go/wiki/Modules
-[go.mod]: https://github.com/containers/image/blob/master/go.mod
 
 ### Supported build tags
 
