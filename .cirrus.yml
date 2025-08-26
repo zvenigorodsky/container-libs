@@ -310,14 +310,9 @@ image_test_skopeo_task:
 common_testing_task:
     alias: common_testing
     name: "Common: Test"
-    container:
-        image: "${FEDORA_CONTAINER_FQIN}"
     modules_cache:
         fingerprint_script: cat common/go.sum
         folder: $GOPATH/pkg/mod
-    build_script: |
-      cd common
-      make vendor
     test_script: |
       cd common
       make build
