@@ -4,7 +4,6 @@ go 1.23.3
 // That generally means there should be no toolchain directive present.
 module go.podman.io/storage
 
-
 require (
 	github.com/BurntSushi/toml v1.5.0
 	github.com/containerd/stargz-snapshotter/estargz v0.17.0
