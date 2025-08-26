@@ -24,7 +24,7 @@ import (
 // sequoiaLibraryDir is the path to the directory where libpodman_sequoia is installed,
 // if it is not in the platform’s default library path.
 // You can override this at build time with
-// -ldflags '-X github.com/containers/image/v5/signature/sequoia.sequoiaLibraryDir=$your_path'
+// -ldflags '-X go.podman.io/image/v5/signature/sequoia.sequoiaLibraryDir=$your_path'
 var sequoiaLibraryDir = ""
 
 type SigningMechanism struct {

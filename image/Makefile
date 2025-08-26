@@ -12,7 +12,7 @@ BUILD_TAGS_DARWIN_CROSS = containers_image_openpgp
 SEQUOIA_SONAME_DIR =
 
 BUILDTAGS =
-BUILDFLAGS := -tags "$(BUILDTAGS)" -ldflags '-X github.com/containers/image/v5/signature/internal/sequoia.sequoiaLibraryDir='"$(SEQUOIA_SONAME_DIR)"
+BUILDFLAGS := -tags "$(BUILDTAGS)" -ldflags '-X go.podman.io/image/v5/signature/internal/sequoia.sequoiaLibraryDir='"$(SEQUOIA_SONAME_DIR)"
 
 # Extra flags passed to go test
 TESTFLAGS :=
