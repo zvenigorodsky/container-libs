@@ -89,7 +89,10 @@ storage_linux_testing: &linux_testing
 storage_fedora_testing_task: &fedora_testing
     <<: *linux_testing
     alias: storage_fedora_testing
-    skip: "!changesInclude('storage/**')"
+    only_if: &only_if_storage >-
+        $CIRRUS_PR == '' ||
+        changesInclude('.cirrus.yml', 'go.work', 'go.work.sum') ||
+        changesInclude('storage/**')
     name: &std_test_name "Storage: ${OS_NAME} ${TEST_DRIVER}"
     env:
         OS_NAME: "${FEDORA_NAME}"
@@ -115,7 +118,7 @@ storage_debian_testing_task: &storage_debian_testing
     <<: *linux_testing
     alias: storage_debian_testing
     name: *std_test_name
-    skip: "!changesInclude('storage/**')"
+    only_if: *only_if_storage
     env:
         OS_NAME: "${DEBIAN_NAME}"
         VM_IMAGE: "${DEBIAN_CACHE_IMAGE_NAME}"
@@ -136,7 +139,7 @@ storage_debian_testing_task: &storage_debian_testing
 storage_lint_task:
     alias: storage_lint
     name: "Storage: Lint"
-    skip: "!changesInclude('storage/**')"
+    only_if: *only_if_storage
 
     env:
         CIRRUS_WORKING_DIR: "/go/src/github.com/containers/storage"
@@ -186,11 +189,10 @@ images_timestamp_update_task:
 image_validate_task:
     alias: image_validate
     name: "Image: Validate"
-    skip: "!changesInclude('storage/**', 'image/**')"
-    # The git-validation tool doesn't work well on branch or tag push,
-    # under Cirrus-CI, due to challenges obtaining the starting commit ID.
-    # Only do validation for PRs.
-    only_if: $CIRRUS_PR != ''
+    only_if: &only_if_image >-
+        $CIRRUS_PR == '' ||
+        changesInclude('.cirrus.yml', 'go.work', 'go.work.sum') ||
+        changesInclude('storage/**', 'image/**')
     gce_instance: &fedora_vm
         image_project: libpod-218412
         zone: "us-central1-f"
@@ -217,8 +219,7 @@ image_validate_task:
 image_cross_task:
     alias: image_cross
     name: "Image: Cross"
-    skip: "!changesInclude('storage/**', 'image/**')"
-    only_if: &not_docs $CIRRUS_CHANGE_TITLE !=~ '.*CI:DOCS.*'
+    only_if: *only_if_image
     gce_instance: *fedora_vm
     env:
         HOME: "/root"  # default unset, needed by golangci-lint.
@@ -232,8 +233,7 @@ image_test_task:
     alias: image_test
     depends_on:
         - image_validate
-    only_if: *not_docs
-    skip: "!changesInclude('storage/**', 'image/**')"
+    only_if: *only_if_image
     gce_instance: *fedora_vm
     env:
         HOME: "/root"  # default unset, needed by golangci-lint.
@@ -267,8 +267,7 @@ image_test_task:
 #####
 image_test_skopeo_task:
     alias: image_test_skopeo
-    only_if: *not_docs
-    skip: "!changesInclude('storage/**', 'image/**')"
+    only_if: *only_if_image
     depends_on:
         - image_validate
     gce_instance: *fedora_vm
@@ -310,8 +309,7 @@ image_test_skopeo_task:
 
 common_testing_task:
     alias: common_testing
-    name: "Common: Test"  
-    skip: "!changesInclude('storage/**', 'image/**', 'common/**')"
+    name: "Common: Test"
     container:
         image: "${FEDORA_CONTAINER_FQIN}"
     modules_cache:
@@ -326,22 +324,8 @@ common_testing_task:
       make build-cross
       make test
 
-storage_vendor_task:
-    alias: storage_vendor
-    name: "Vendor"
-    container:
-        image: golang
-    modules_cache:
-        fingerprint_script: cat storage/go.sum
-        folder: $GOPATH/pkg/mod
-    build_script: |
-      cd storage
-      make vendor
-    test_script: |
-      cd storage
-
 storage_cross_task:
-    skip: "!changesInclude('storage/**')"
+    only_if: *only_if_storage
     alias: storage_cross
     name: "Storage: Cross"
     container:
@@ -351,7 +335,7 @@ storage_cross_task:
       make cross
 
 storage_gofix_task:
-    skip: "!changesInclude('storage/**')"
+    only_if: *only_if_storage
     alias: storage_gofix
     name: "Storage: gofix"
     container:
@@ -366,7 +350,7 @@ storage_gofix_task:
       git diff --diff-filter=M --exit-code -- . ":(exclude)*.crt" ":(exclude)*.key" ":(exclude)*.cert"
 
 storage_codespell_task:
-    skip: "!changesInclude('storage/**')"
+    only_if: *only_if_storage
     alias: storage_codespell
     name: "Storage: codespell"
     container:
@@ -390,7 +374,6 @@ success_task:
         - storage_fedora_testing
         - storage_debian_testing
         - images_timestamp_update
-        - storage_vendor
         - storage_cross
         - storage_gofix
         - storage_codespell
