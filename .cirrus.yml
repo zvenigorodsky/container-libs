@@ -6,7 +6,7 @@ env:
     #### Global variables used for all tasks
     ####
     # Overrides default location (/tmp/cirrus) for repo clone
-    CIRRUS_WORKING_DIR: "/var/tmp/go/src/github.com/containers/storage"
+    CIRRUS_WORKING_DIR: "/var/tmp/go/src/github.com/containers/container-libs"
     # Shell used to execute all script commands
     CIRRUS_SHELL: "/bin/bash"
     # Automation script path relative to $CIRRUS_WORKING_DIR)
@@ -16,8 +16,9 @@ env:
     CIRRUS_CLONE_DEPTH: 50
     DEST_BRANCH: "main"
     GOPATH: "/var/tmp/go"
-    SKOPEO_PATH: "/var/tmp/go/src/github.com/containers/skopeo"
     GOBIN: "${GOPATH}/bin"
+    GOCACHE: "${GOPATH}/cache"
+    SKOPEO_PATH: "/var/tmp/go/src/github.com/containers/skopeo"
     IMAGE_WORKING_DIR: "/var/tmp/go/src/github.com/containers/image"
 
 
