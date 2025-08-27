@@ -21,7 +21,7 @@ type db struct {
 	lastModified time.Time
 }
 
-// loadDB loads database data into the in-memory cache if it has been modified
+// loadDB loads database data into the in-memory cache if it has been modified.
 func (s *ConfigMapManager) loadDB() error {
 	// check if the db file exists
 	fileInfo, err := os.Stat(s.configMapDBPath)
@@ -118,7 +118,7 @@ func (s *ConfigMapManager) getExactNameAndID(nameOrID string) (name, id string, 
 }
 
 // exactConfigMapExists checks if the configmap exists, given a name or ID
-// Does not match partial name or IDs
+// Does not match partial name or IDs.
 func (s *ConfigMapManager) exactConfigMapExists(nameOrID string) (bool, error) {
 	_, _, err := s.getExactNameAndID(nameOrID)
 	if err != nil {

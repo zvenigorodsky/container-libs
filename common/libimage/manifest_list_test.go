@@ -86,7 +86,7 @@ func TestConvertManifestList(t *testing.T) {
 	require.True(t, isList, "list thinks it's not a list")
 }
 
-// Inspect must contain both formats i.e OCIv1 and docker
+// Inspect must contain both formats i.e OCIv1 and docker.
 func TestInspectManifestListWithAnnotations(t *testing.T) {
 	listName := "testinspect"
 	runtime := testNewRuntime(t)
@@ -154,7 +154,7 @@ func TestInspectManifestListWithAnnotations(t *testing.T) {
 }
 
 // Following test ensure that `Tag` tags the manifest list instead of resolved image.
-// Both the tags should point to same image id
+// Both the tags should point to same image id.
 func TestCreateAndTagManifestList(t *testing.T) {
 	tagName := "testlisttagged"
 	listName := "testlist"

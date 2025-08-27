@@ -210,7 +210,7 @@ func TestFormatter_FuncsJSON(t *testing.T) {
 	assert.Equal(t, `["ident1","ident2","ident3"]`+"\n", buf.String(), fmt.Sprintf("cooked %+q", rpt.text))
 }
 
-// Verify compatible output
+// Verify compatible output.
 func TestFormatter_Compatible(t *testing.T) {
 	buf := new(bytes.Buffer)
 

@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestDeviceParser verifies the given device strings is parsed correctly
+// TestDeviceParser verifies the given device strings is parsed correctly.
 func TestDeviceParser(t *testing.T) {
 	if runtime.GOOS != "linux" {
 		t.Skip("Devices is only supported on Linux")

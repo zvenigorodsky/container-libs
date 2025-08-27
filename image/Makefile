@@ -34,15 +34,10 @@ CONTAINERSCONFDIR ?= /etc/containers
 endif
 REGISTRIESDDIR ?= ${CONTAINERSCONFDIR}/registries.d
 
-# N/B: This value is managed by Renovate, manual changes are
-# possible, as long as they don't disturb the formatting
-# (i.e. DO NOT ADD A 'v' prefix!)
-GOLANGCI_LINT_VERSION := 2.4.0
-
 export PATH := $(PATH):${GOBIN}
 
 .PHONY: all
-all: tools test validate .gitvalidation
+all: test lint
 
 .PHONY: build
 build:
@@ -70,21 +65,6 @@ cross:
 	GOOS=windows $(MAKE) build BUILDTAGS="$(BUILDTAGS) $(BUILD_TAGS_WINDOWS_CROSS)"
 	GOOS=darwin $(MAKE) build BUILDTAGS="$(BUILDTAGS) $(BUILD_TAGS_DARWIN_CROSS)"
 
-.PHONY: tools
-tools: .install.gitvalidation .install.golangci-lint
-
-.PHONY: .install.gitvalidation
-.install.gitvalidation:
-	if [ ! -x "$(GOBIN)/git-validation" ]; then \
-		go install github.com/vbatts/git-validation@latest; \
-	fi
-
-.PHONY: .install.golangci-lint
-.install.golangci-lint:
-	if [ ! -x "$(GOBIN)/golangci-lint" ]; then \
-		curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(GOBIN) v$(GOLANGCI_LINT_VERSION) ; \
-	fi
-
 .PHONY: clean
 clean:
 	rm -rf $(MANPAGES)
@@ -97,26 +77,16 @@ test:
 fmt:
 	@gofmt -l -s -w $(SOURCE_DIRS)
 
-.PHONY: validate
-validate: lint
-	@BUILDTAGS="$(BUILDTAGS)" hack/validate.sh
-
 .PHONY: lint
 lint:
-	$(GOBIN)/golangci-lint run --build-tags "$(BUILDTAGS)"
+	golangci-lint run --build-tags "$(BUILDTAGS)"
 
-# When this is running in CI, it will only check the CI commit range
-.PHONY: .gitvalidation
-.gitvalidation:
-	@which $(GOBIN)/git-validation > /dev/null 2>/dev/null || (echo "ERROR: git-validation not found. Consider 'make clean && make tools'" && false)
-	git fetch -q "https://github.com/containers/container-libs.git" "refs/heads/main"
-	upstream="$$(git rev-parse --verify FETCH_HEAD)" ; \
-		$(GOBIN)/git-validation -q -run DCO,short-subject,dangling-whitespace -range $$upstream..HEAD
+.PHONY: tidy-in-container
+tidy-in-container:
+	podman run --privileged --rm --env HOME=/root -v `pwd`:/src -w /src golang make tidy
 
-.PHONY: vendor-in-container
-vendor-in-container:
-	podman run --privileged --rm --env HOME=/root -v `pwd`:/src -w /src golang go mod tidy
-
-.PHONY: codespell
-codespell:
-	codespell -w
+.PHONY: tidy
+tidy:
+	go mod tidy
+	go mod verify
+	go mod edit -toolchain none

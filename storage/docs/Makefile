@@ -1,4 +1,4 @@
-GOMD2MAN = ../tests/tools/build/go-md2man
+GOMD2MAN ?= $(shell command -v go-md2man || echo '$(GOBIN)/go-md2man')
 PREFIX ?= ${DESTDIR}/usr
 MANINSTALLDIR=${PREFIX}/share/man
 MANPAGES_MD = $(wildcard docs/*.5.md)

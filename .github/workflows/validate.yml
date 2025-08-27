@@ -22,7 +22,7 @@ jobs:
       # Version of codespell bundled with Ubuntu is way old, so use pip.
       run: pip install --break-system-packages codespell==v2.4.1
     - name: run codespell
-      run: codespell --dictionary=-
+      run: make codespell
 
   lint:
     runs-on: ubuntu-24.04
@@ -49,14 +49,6 @@ jobs:
       with:
         version: "${{ env.LINT_VERSION }}"
         args: --verbose
-        working-directory: ./common
-    # Extra linters, only checking new code from a pull request.
-    - name: lint-common-extra
-      uses: golangci/golangci-lint-action@v8
-      with:
-        args: --config=.golangci-extra.yml
-        version: "${{ env.LINT_VERSION }}"
-        only-new-issues: true
         working-directory: ./common
     - name: lint-image
       uses: golangci/golangci-lint-action@v8
@@ -90,7 +82,5 @@ jobs:
         go-version: 1.25.x
         # See comment on lint task
         cache-dependency-path: "**/go.sum"
-    - name: install deps
-      run: go install github.com/vbatts/git-validation@v1.2.2
     - name: run git-validation
-      run: git-validation -q -run DCO,short-subject,dangling-whitespace -range "HEAD~${{ github.event.pull_request.commits }}..HEAD"
+      run: make git-validation EPOCH_TEST_COMMIT="HEAD~${{ github.event.pull_request.commits }}"

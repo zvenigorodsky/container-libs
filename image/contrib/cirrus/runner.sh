@@ -24,8 +24,6 @@ _run_setup() {
 
     project_module=$(go list .)
 
-    make tools
-
     rm -rf "${SKOPEO_PATH}"
     git clone -b ${SKOPEO_CI_BRANCH} \
         https://github.com/containers/skopeo.git ${SKOPEO_PATH}

@@ -100,22 +100,22 @@ func TestResources(t *testing.T) {
 	}
 
 	bits := new(big.Int)
-	cpuset_val := bits.SetBit(bits, 0, 1).Bytes()
+	cpusetVal := bits.SetBit(bits, 0, 1).Bytes()
 
 	cpus, ok := b["AllowedCPUs"]
 	if !ok {
 		t.Fatal("Cpuset Cpus not parsed.")
 	}
-	if !bytes.Equal(cpus, cpuset_val) {
-		t.Fatal("Cpuset Cpus incorrect value expected " + string(cpuset_val) + " got " + string(cpus))
+	if !bytes.Equal(cpus, cpusetVal) {
+		t.Fatal("Cpuset Cpus incorrect value expected " + string(cpusetVal) + " got " + string(cpus))
 	}
 
 	mems, ok := b["AllowedMemoryNodes"]
 	if !ok {
 		t.Fatal("Cpuset Mems not parsed.")
 	}
-	if !bytes.Equal(mems, cpuset_val) {
-		t.Fatal("Cpuset Mems incorrect value expected " + string(cpuset_val) + " got " + string(mems))
+	if !bytes.Equal(mems, cpusetVal) {
+		t.Fatal("Cpuset Mems incorrect value expected " + string(cpusetVal) + " got " + string(mems))
 	}
 
 	err = os.Mkdir("/dev/foodevdir", os.ModePerm)

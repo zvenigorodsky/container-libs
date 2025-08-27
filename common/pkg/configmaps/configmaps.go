@@ -16,44 +16,44 @@ import (
 	"go.podman.io/storage/pkg/stringid"
 )
 
-// maxConfigMapSize is the max size for configMap data - 512kB
+// maxConfigMapSize is the max size for configMap data - 512kB.
 const maxConfigMapSize = 512000
 
-// configMapIDLength is the character length of a configMap ID - 25
+// configMapIDLength is the character length of a configMap ID - 25.
 const configMapIDLength = 25
 
-// errInvalidPath indicates that the configMaps path is invalid
+// errInvalidPath indicates that the configMaps path is invalid.
 var errInvalidPath = errors.New("invalid configmaps path")
 
-// ErrNoSuchConfigMap indicates that the configMap does not exist
+// ErrNoSuchConfigMap indicates that the configMap does not exist.
 var ErrNoSuchConfigMap = errors.New("no such configmap")
 
-// errConfigMapNameInUse indicates that the configMap name is already in use
+// errConfigMapNameInUse indicates that the configMap name is already in use.
 var errConfigMapNameInUse = errors.New("configmap name in use")
 
-// errInvalidConfigMapName indicates that the configMap name is invalid
+// errInvalidConfigMapName indicates that the configMap name is invalid.
 var errInvalidConfigMapName = errors.New("invalid configmap name")
 
-// errInvalidDriver indicates that the driver type is invalid
+// errInvalidDriver indicates that the driver type is invalid.
 var errInvalidDriver = errors.New("invalid driver")
 
-// errInvalidDriverOpt indicates that a driver option is invalid
+// errInvalidDriverOpt indicates that a driver option is invalid.
 var errInvalidDriverOpt = errors.New("invalid driver option")
 
-// errAmbiguous indicates that a configMap is ambiguous
+// errAmbiguous indicates that a configMap is ambiguous.
 var errAmbiguous = errors.New("configmap is ambiguous")
 
-// errDataSize indicates that the configMap data is too large or too small
+// errDataSize indicates that the configMap data is too large or too small.
 var errDataSize = errors.New("configmap data must be larger than 0 and less than 512000 bytes")
 
-// configMapsFile is the name of the file that the configMaps database will be stored in
+// configMapsFile is the name of the file that the configMaps database will be stored in.
 var configMapsFile = "configmaps.json"
 
 // configMapNameRegexp matches valid configMap names
-// Allowed: 253 [a-zA-Z0-9-_.] characters, and the start and end character must be [a-zA-Z0-9]
+// Allowed: 253 [a-zA-Z0-9-_.] characters, and the start and end character must be [a-zA-Z0-9].
 var configMapNameRegexp = regexp.Delayed(`^[a-zA-Z0-9][a-zA-Z0-9_.-]*$`)
 
-// ConfigMapManager holds information on handling configmaps
+// ConfigMapManager holds information on handling configmaps.
 type ConfigMapManager struct {
 	// configMapDBPath is the path to the db file where configmaps are stored
 	configMapDBPath string
@@ -63,7 +63,7 @@ type ConfigMapManager struct {
 	db *db
 }
 
-// ConfigMap defines a configMap
+// ConfigMap defines a configMap.
 type ConfigMap struct {
 	// Name is the name of the configmap
 	Name string `json:"name"`
@@ -98,7 +98,7 @@ type ConfigMapsDriver interface {
 }
 
 // NewManager creates a new configMaps manager
-// rootPath is the directory where the configMaps data file resides
+// rootPath is the directory where the configMaps data file resides.
 func NewManager(rootPath string) (*ConfigMapManager, error) {
 	manager := new(ConfigMapManager)
 

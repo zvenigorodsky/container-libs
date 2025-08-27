@@ -70,27 +70,23 @@ netavark-testplugin: bin/netavark-testplugin
 docs:
 	$(MAKE) -C docs
 
-.PHONY: validate
-validate:
+.PHONY: lint
+lint:
 	golangci-lint run
+
+.PHONY: validate
+validate: lint
 	./tools/validate_seccomp.sh ./pkg/seccomp
 
-vendor-in-container:
-	podman run --privileged --rm --env HOME=/root -v `pwd`:/src -w /src golang make vendor
+.PHONY: tidy-in-container
+tidy-in-container:
+	podman run --privileged --rm --env HOME=/root -v `pwd`:/src -w /src golang make tidy
 
-.PHONY: vendor
-vendor:
+.PHONY: tidy
+tidy:
 	$(GO) mod tidy
-	$(GO) work vendor
 	$(GO) mod verify
 	$(GO) mod edit -toolchain none
-
-.PHONY: install.tools
-install.tools: .install.md2man
-
-.PHONY: .install.md2man
-.install.md2man:
-	$(GO) install github.com/cpuguy83/go-md2man/v2@latest
 
 .PHONY: install
 install:
@@ -107,10 +103,6 @@ test-unit: netavark-testplugin
 	go test --tags seccomp,$(BUILDTAGS) -v ./...
 	go test --tags remote,$(BUILDTAGS) -v ./pkg/config
 	go test --tags cni,$(BUILDTAGS) -v ./libnetwork/cni
-
-.PHONY: codespell
-codespell:
-	codespell --dictionary=- -w
 
 clean: ## Clean artifacts
 	$(MAKE) -C docs clean
