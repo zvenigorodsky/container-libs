@@ -50,8 +50,6 @@
    *** Repository-specific configuration options ***
    *************************************************/
 
-  // Don't leave dep. update. PRs "hanging", assign them to people.
-  // "assignees": ["rhatdan", "vrothberg", "Luap99"],
   "postUpdateOptions": [
     "gomodVendor",
     "gomodTidy"
@@ -60,7 +58,9 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": "^.github/workflows/validate.yml$",
+      "managerFilePatterns": [
+        '/^.github/workflows/validate.yml$/',
+      ],
       "matchStrings": [
         "LINT_VERSION:\\s+(?<currentValue>.+)\\s*"
       ],
