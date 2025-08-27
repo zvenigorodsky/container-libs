@@ -58,7 +58,9 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": "^.github/workflows/validate.yml$",
+      "managerFilePatterns": [
+        '/^.github/workflows/validate.yml$/',
+      ],
       "matchStrings": [
         "LINT_VERSION:\\s+(?<currentValue>.+)\\s*"
       ],
