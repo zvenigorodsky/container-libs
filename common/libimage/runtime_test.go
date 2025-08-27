@@ -111,12 +111,12 @@ func TestRuntimeListImagesAllImages(t *testing.T) {
 	require.NoError(t, err)
 
 	require.Len(t, images, 2)
-	var image_names []string
+	var imageNames []string
 	for _, i := range images {
-		image_names = append(image_names, i.Names()...)
+		imageNames = append(imageNames, i.Names()...)
 	}
 	assert.ElementsMatch(t,
-		image_names,
+		imageNames,
 		[]string{"quay.io/libpod/alpine:latest", "quay.io/libpod/busybox:latest"},
 	)
 }

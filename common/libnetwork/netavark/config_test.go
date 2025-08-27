@@ -2295,14 +2295,14 @@ func grepInFile(path, match string) {
 	ExpectWithOffset(1, string(data)).To(ContainSubstring(match))
 }
 
-// HaveNetworkName is a custom GomegaMatcher to match a network name
+// HaveNetworkName is a custom GomegaMatcher to match a network name.
 func HaveNetworkName(name string) gomegaTypes.GomegaMatcher {
 	return WithTransform(func(e types.Network) string {
 		return e.Name
 	}, Equal(name))
 }
 
-// EqualNetwork must be used because comparing the time with deep equal does not work
+// EqualNetwork must be used because comparing the time with deep equal does not work.
 func EqualNetwork(net1, net2 types.Network) {
 	ExpectWithOffset(1, net1.Created.Equal(net2.Created)).To(BeTrue(), "net1 created: %v is not equal net2 created: %v", net1.Created, net2.Created)
 	net1.Created = time.Time{}

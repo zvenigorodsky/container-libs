@@ -50,14 +50,6 @@ jobs:
         version: "${{ env.LINT_VERSION }}"
         args: --verbose
         working-directory: ./common
-    # Extra linters, only checking new code from a pull request.
-    - name: lint-common-extra
-      uses: golangci/golangci-lint-action@v8
-      with:
-        args: --config=.golangci-extra.yml
-        version: "${{ env.LINT_VERSION }}"
-        only-new-issues: true
-        working-directory: ./common
     - name: lint-image
       uses: golangci/golangci-lint-action@v8
       with:

@@ -19,7 +19,7 @@ import (
 // available for other users. One possible candidate would be CRI-O.
 
 // CRImportCheckpointWithoutConfig imports the checkpoint archive (input)
-// into the directory destination without "config.dump" and "spec.dump"
+// into the directory destination without "config.dump" and "spec.dump".
 func CRImportCheckpointWithoutConfig(destination, input string) error {
 	archiveFile, err := os.Open(input)
 	if err != nil {
@@ -96,7 +96,7 @@ func CRRemoveDeletedFiles(id, baseDirectory, containerRootDirectory string) erro
 }
 
 // CRApplyRootFsDiffTar applies the tar archive found in baseDirectory with the
-// root file system changes on top of containerRootDirectory
+// root file system changes on top of containerRootDirectory.
 func CRApplyRootFsDiffTar(baseDirectory, containerRootDirectory string) error {
 	rootfsDiffPath := filepath.Join(baseDirectory, metadata.RootFsDiffTar)
 	// Only do this if a rootfs-diff.tar actually exists
@@ -222,7 +222,7 @@ func CRRuntimeSupportsCheckpointRestore(runtimePath string) bool {
 	return false
 }
 
-// CRRuntimeSupportsCheckpointRestore tests if the runtime at 'runtimePath'
+// CRRuntimeSupportsPodCheckpointRestore tests if the runtime at 'runtimePath'
 // supports restoring into existing Pods. The runtime needs to support
 // the CRIU option --lsm-mount-context and the existence of this is checked
 // by this function. In addition it is necessary to at least have CRIU 3.16.

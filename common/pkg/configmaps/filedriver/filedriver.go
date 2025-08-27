@@ -14,16 +14,16 @@ import (
 	"go.podman.io/storage/pkg/lockfile"
 )
 
-// configMapsDataFile is the file where configMaps data/payload will be stored
+// configMapsDataFile is the file where configMaps data/payload will be stored.
 var configMapsDataFile = "configmapsdata.json"
 
-// errNoSecretData indicates that there is not data associated with an id
+// errNoSecretData indicates that there is not data associated with an id.
 var errNoSecretData = errors.New("no configMap data with ID")
 
-// errNoSecretData indicates that there is configMap data already associated with an id
+// errNoSecretData indicates that there is configMap data already associated with an id.
 var errSecretIDExists = errors.New("configMap data with ID already exists")
 
-// Driver is the filedriver object
+// Driver is the filedriver object.
 type Driver struct {
 	// configMapsDataFilePath is the path to the configMapsfile
 	configMapsDataFilePath string
@@ -50,7 +50,7 @@ func NewDriver(rootPath string) (*Driver, error) {
 	return fileDriver, nil
 }
 
-// List returns all configMap IDs
+// List returns all configMap IDs.
 func (d *Driver) List() ([]string, error) {
 	d.lockfile.Lock()
 	defer d.lockfile.Unlock()
@@ -61,7 +61,7 @@ func (d *Driver) List() ([]string, error) {
 	return slices.Sorted(maps.Keys(configMapData)), nil
 }
 
-// Lookup returns the bytes associated with a configMap ID
+// Lookup returns the bytes associated with a configMap ID.
 func (d *Driver) Lookup(id string) ([]byte, error) {
 	d.lockfile.Lock()
 	defer d.lockfile.Unlock()
@@ -76,7 +76,7 @@ func (d *Driver) Lookup(id string) ([]byte, error) {
 	return nil, fmt.Errorf("%s: %w", id, errNoSecretData)
 }
 
-// Store stores the bytes associated with an ID. An error is returned if the ID already exists
+// Store stores the bytes associated with an ID. An error is returned if the ID already exists.
 func (d *Driver) Store(id string, data []byte) error {
 	d.lockfile.Lock()
 	defer d.lockfile.Unlock()
@@ -124,7 +124,7 @@ func (d *Driver) Delete(id string) error {
 	return nil
 }
 
-// getAllData reads the data file and returns all data
+// getAllData reads the data file and returns all data.
 func (d *Driver) getAllData() (map[string][]byte, error) {
 	// check if the db file exists
 	err := fileutils.Exists(d.configMapsDataFilePath)

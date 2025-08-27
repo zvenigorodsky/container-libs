@@ -1741,7 +1741,7 @@ func grepFile(not bool, path, match string) {
 	ExpectWithOffset(2, string(data)).To(matcher)
 }
 
-// HaveNetworkName is a custom GomegaMatcher to match a network name
+// HaveNetworkName is a custom GomegaMatcher to match a network name.
 func HaveNetworkName(name string) gomegaTypes.GomegaMatcher {
 	return WithTransform(func(e types.Network) string {
 		return e.Name
