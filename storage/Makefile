@@ -18,9 +18,7 @@
 	local-test-integration \
 	local-test-unit \
 	test-integration \
-	test-unit \
-	vendor \
-	vendor-in-container
+	test-unit
 
 NATIVETAGS :=
 AUTOTAGS := $(shell ./hack/btrfs_tag.sh) $(shell ./hack/libsubid_tag.sh)
@@ -74,10 +72,12 @@ lint:
 help: ## this help
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-z A-Z_-]+:.*?## / {gsub(" ",",",$$1);gsub("\\\\n",sprintf("\n%22c"," "), $$2);printf "\033[36m%-21s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-vendor-in-container:
-	podman run --privileged --rm --env HOME=/root -v `pwd`:/src -w /src golang make vendor
+.PHONY: tidy-in-container
+tidy-in-container:
+	podman run --privileged --rm --env HOME=/root -v `pwd`:/src -w /src golang make tidy
 
-vendor:
+.PHONY: tidy
+tidy:
 	$(GO) mod tidy
-	$(GO) work vendor
 	$(GO) mod verify
+	$(GO) mod edit -toolchain none

@@ -81,6 +81,12 @@ fmt:
 lint:
 	golangci-lint run --build-tags "$(BUILDTAGS)"
 
-.PHONY: vendor-in-container
-vendor-in-container:
-	podman run --privileged --rm --env HOME=/root -v `pwd`:/src -w /src golang go mod tidy
+.PHONY: tidy-in-container
+tidy-in-container:
+	podman run --privileged --rm --env HOME=/root -v `pwd`:/src -w /src golang make tidy
+
+.PHONY: tidy
+tidy:
+	go mod tidy
+	go mod verify
+	go mod edit -toolchain none

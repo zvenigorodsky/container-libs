@@ -78,13 +78,13 @@ lint:
 validate: lint
 	./tools/validate_seccomp.sh ./pkg/seccomp
 
-vendor-in-container:
-	podman run --privileged --rm --env HOME=/root -v `pwd`:/src -w /src golang make vendor
+.PHONY: tidy-in-container
+tidy-in-container:
+	podman run --privileged --rm --env HOME=/root -v `pwd`:/src -w /src golang make tidy
 
-.PHONY: vendor
-vendor:
+.PHONY: tidy
+tidy:
 	$(GO) mod tidy
-	$(GO) work vendor
 	$(GO) mod verify
 	$(GO) mod edit -toolchain none
 

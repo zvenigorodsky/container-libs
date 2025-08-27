@@ -48,3 +48,13 @@ lint: .install.golangci-lint
 	@$(MAKE) -C common lint
 	@$(MAKE) -C image lint
 	@$(MAKE) -C storage lint
+
+.PHONY: tidy-in-container
+tidy-in-container:
+	podman run --privileged --rm --env HOME=/root -v `pwd`:/src -w /src golang make tidy
+
+.PHONY: tidy
+tidy:
+	@$(MAKE) -C common tidy
+	@$(MAKE) -C image tidy
+	@$(MAKE) -C storage tidy
