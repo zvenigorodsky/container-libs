@@ -9,7 +9,6 @@ pwd
 ls -l
 make install.tools
 showrun make local-binary
-showrun make local-cross
 
 case $TEST_DRIVER in
     overlay)

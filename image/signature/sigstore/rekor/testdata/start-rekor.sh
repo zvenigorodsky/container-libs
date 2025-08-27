@@ -36,7 +36,7 @@ podman run -d --pod $POD_NAME --name rekor-db-$SUFFIX \
 
 # The db takes a bit to start up, wait until it is ready otherwise the trillian
 # containers fail to start due the missing db connection.
-max_retries=20
+max_retries=40
 retries=0
 while [[ $retries -le $max_retries ]]; do
     out=$(podman logs rekor-db-$SUFFIX 2>&1)
@@ -46,7 +46,9 @@ while [[ $retries -le $max_retries ]]; do
 
     retries=$((retries + 1))
     if [[ $retries -ge $max_retries ]]; then
-        echo "Failed to wait for the database to become ready"
+        echo "Failed to wait for the database to become ready, logs:"
+        echo "$out"
+        podman ps
         podman pod rm -f -t0 $POD_NAME
         exit 1
     fi
