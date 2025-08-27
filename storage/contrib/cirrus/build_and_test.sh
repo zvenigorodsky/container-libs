@@ -7,7 +7,6 @@ source $(dirname $0)/lib.sh
 cd $GOSRC/storage
 pwd
 ls -l
-make install.tools
 showrun make local-binary
 
 case $TEST_DRIVER in
