@@ -1,0 +1,11 @@
+# Add labels based on file paths in PR
+#   https://github.com/actions/labeler
+common:
+  - changed-files:
+    - any-glob-to-any-file: common/**
+image:
+  - changed-files:
+    - any-glob-to-any-file: image/**
+storage:
+  - changed-files:
+    - any-glob-to-any-file: storage/**
