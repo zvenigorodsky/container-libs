@@ -83,4 +83,6 @@ jobs:
         # See comment on lint task
         cache-dependency-path: "**/go.sum"
     - name: run git-validation
-      run: make git-validation EPOCH_TEST_COMMIT="HEAD~${{ github.event.pull_request.commits }}"
+      # We validate all commits as we only fetched the number of commits in the PR above,
+      # by default git-validation has some special github action handling but that seems broken.
+      run: make .install.gitvalidation && git-validation -no-github
