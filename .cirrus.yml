@@ -266,6 +266,8 @@ common_testing_task:
     modules_cache:
         fingerprint_script: cat common/go.sum
         folder: $GOPATH/pkg/mod
+    env:
+        NETAVARK_BINARY: "/usr/libexec/podman/netavark"
     test_script: |
       cd common
       make build
