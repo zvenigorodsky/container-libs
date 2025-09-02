@@ -139,8 +139,3 @@ require (
 	google.golang.org/protobuf v1.36.8 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-retract (
-	v1.0.1 // This version is used only to publish retraction of v1.0.1.
-	v1.0.0 // We reverted to v0.… version numbers; the v1.0.0 tag was actually deleted.
-)
