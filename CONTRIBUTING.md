@@ -32,6 +32,10 @@ However, most of the things here listed are very generic and apply when contribu
 
 * [Reporting Issues](#reporting-issues)
 * [Submitting Pull Requests](#submitting-pull-requests)
+  * [Describe your Changes in Commit Messages](#describe-your-changes-in-commit-messages)
+  * [Sign your PRs](#sign-your-prs)
+  * [Code review](#code-review)
+  * [Rebasing](#rebasing)
 * [Find bad changes with git bisect](#find-bad-changes-with-git-bisect)
 
 ## Reporting Issues

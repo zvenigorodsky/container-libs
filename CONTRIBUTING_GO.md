@@ -13,6 +13,7 @@ At present, this means the following repositories:
 
 ## Topics
 
+* [Unit Tests](#unit-tests)
 * [Go Dependency updates](#go-dependency-updates)
 * [Testing changes in a dependent repository](#testing-changes-in-a-dependent-repository)
 * [git bisect a change in a Go dependency](#git-bisect-a-change-in-a-go-dependency)
