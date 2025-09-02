@@ -226,7 +226,7 @@ image_test_skopeo_task:
     gce_instance: *fedora_vm
     env:
         HOME: "/root"  # default unset, needed by golangci-lint.
-        GOSRC: "${CIRRUS_WORKING_DIR}/image"
+        GOSRC: "${CIRRUS_WORKING_DIR}"
         GOPATH: "/var/tmp/go"
         SKOPEO_CI_BRANCH: "main"
         SCRIPT_BASE: "./contrib/cirrus"
