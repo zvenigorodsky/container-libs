@@ -36,7 +36,7 @@ require (
 	github.com/ulikunitz/xz v0.5.15
 	github.com/vbauerster/mpb/v8 v8.10.2
 	go.etcd.io/bbolt v1.4.3
-	go.podman.io/storage v0.0.0-20250826051548-492e14c977cd
+	go.podman.io/storage v1.60.0
 	golang.org/x/crypto v0.41.0
 	golang.org/x/oauth2 v0.30.0
 	golang.org/x/sync v0.16.0
