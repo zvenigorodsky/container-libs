@@ -1,8 +1,8 @@
 ---
 # See the documentation for more information:
 # https://packit.dev/docs/configuration/
-
 upstream_tag_template: common/v{version}
+upstream_tag_include: '^common\/v\d+\.\d+\.\d+$'
 
 packages:
   containers-common-fedora:
@@ -17,14 +17,12 @@ packages:
     downstream_package_name: containers-common
     specfile_path: common/rpm/containers-common.spec
 
-srpm_build_deps:
-  - git-archive-all
-  - make
-
 # https://packit.dev/docs/configuration/actions
-# fix-spec-file only operates on copr builds and doesn't affect official distro builds
+# Per the packit team, `get-current-version` should not affect propose_downstream (even if mentioned as such)
+# Either way, for official releases, both `get-current-version` and Packit's default will fetch identical versions,
+# so it's safe to use globally.
 actions:
-  fix-spec-file: "bash .packit-copr-rpm.sh"
+  get-current-version: bash -c 'grep "^const Version" common/version/version.go | cut -f2 -d\" | tr \- \~'
 
 jobs:
   - job: copr_build
