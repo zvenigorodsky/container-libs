@@ -308,8 +308,8 @@ go.opentelemetry.io/proto/otlp v1.5.0 h1:xJvq7gMzB31/d406fB8U5CBdyQGw4P399D1aQWU
 go.opentelemetry.io/proto/otlp v1.5.0/go.mod h1:keN8WnHxOy8PG0rQZjJJ5A2ebUoafqWp0eVQ4yIXvJ4=
 go.podman.io/image/v5 v5.0.0-20250826054041-6e4bed3c9118 h1:kbCAwuBu44/PsEN3Fj5JPSZZUjTAiTIpBC5yCmUBV6A=
 go.podman.io/image/v5 v5.0.0-20250826054041-6e4bed3c9118/go.mod h1:lW/CAHGbk1XF38SBTS3JoFZMnuW1CrU6ViTY3NxcBqQ=
-go.podman.io/storage v0.0.0-20250826054041-6e4bed3c9118 h1:Fhm01df7FOuM0seIEcx72OnCDUNCPQ1dGH2/7L3kFY8=
-go.podman.io/storage v0.0.0-20250826054041-6e4bed3c9118/go.mod h1:gFpJkc16XdKgwbZwxJ4cxfyg++vmlT3yaoc2SRXSqYQ=
+go.podman.io/storage v1.60.0 h1:bWNSrR58nxg39VNFDSx3m0AswbvyzPGOo5XsUfomTao=
+go.podman.io/storage v1.60.0/go.mod h1:NK+rsWJVuQeCM7ifv7cxD3abegWxwtW/3OkuSUJJoE4=
 go.uber.org/automaxprocs v1.6.0 h1:O3y2/QNTOdbF+e/dpXNNW7Rx2hZ4sTIPyybbxyNqTUs=
 go.uber.org/automaxprocs v1.6.0/go.mod h1:ifeIMSnPZuznNm6jmdzmU3/bfk01Fe2fotchwEFJ8r8=
 go.yaml.in/yaml/v2 v2.4.2 h1:DzmwEr2rDGHl7lsFgAHxmNz/1NlQ7xLIrlN2h5d1eGI=
