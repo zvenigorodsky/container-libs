@@ -22,8 +22,6 @@ export "PATH=$PATH:$GOPATH/bin"
 _run_setup() {
     req_env_vars SKOPEO_PATH SKOPEO_CI_BRANCH GOSRC
 
-    project_module=$(go list .)
-
     rm -rf "${SKOPEO_PATH}"
     git clone -b ${SKOPEO_CI_BRANCH} \
         https://github.com/containers/skopeo.git ${SKOPEO_PATH}
@@ -35,8 +33,9 @@ _run_setup() {
         git checkout FETCH_HEAD
     fi
 
-    msg "Replacing upstream skopeo $SKOPEO_CI_BRANCH branch $project_module module"
-    go mod edit -replace ${project_module}=$GOSRC
+    go mod edit -replace go.podman.io/storage="$GOSRC/storage"
+    go mod edit -replace go.podman.io/image/v5="$GOSRC/image"
+    go mod edit -replace go.podman.io/common="$GOSRC/common"
 
     "${SKOPEO_PATH}/${SCRIPT_BASE}/runner.sh" setup
 }
