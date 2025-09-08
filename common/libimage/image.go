@@ -634,10 +634,9 @@ func (i *Image) Untag(name string) error {
 
 	name = ref.String()
 
-	foundName := slices.Contains(i.Names(), name)
 	// Return an error if the name is not found, the c/storage
 	// RemoveNames() API does not create one if no match is found.
-	if !foundName {
+	if !slices.Contains(i.Names(), name) {
 		return fmt.Errorf("%s: %w", name, errTagUnknown)
 	}
 
