@@ -303,7 +303,7 @@ func (m *ManifestList) LookupInstance(ctx context.Context, architecture, os, var
 	}
 
 	for _, image := range allImages {
-		if slices.Contains(append(image.Digests(), image.Digest()), instanceDigest) {
+		if slices.Contains(image.Digests(), instanceDigest) || instanceDigest == image.Digest() {
 			return image, nil
 		}
 	}
