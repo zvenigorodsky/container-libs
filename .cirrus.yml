@@ -74,6 +74,16 @@ storage_linux_testing: &linux_testing
     gce_instance:  # Only need to specify differences from defaults (above)
         image_name: "${VM_IMAGE}"
 
+    # Go module cache that is shared for all tasks
+    modules_cache: &modules_cache
+        fingerprint_script: cat **/go.sum
+        folder: $GOPATH/pkg/mod
+        # Note the cache is populated the first time it is used with the given deps.
+        # But because each task might not download all he same deps force make tidy
+        # which downloads all deps for all modules. This is only run once when the
+        # cache is created so it should not slow things down much.
+        populate_script: make tidy
+
     # Separate scripts for separate outputs, makes debugging easier.
     setup_script: '${CIRRUS_WORKING_DIR}/${SCRIPT_BASE}/setup.sh |& ${_TIMESTAMP}'
     build_and_test_script: '${CIRRUS_WORKING_DIR}/${SCRIPT_BASE}/build_and_test.sh |& ${_TIMESTAMP}'
@@ -178,6 +188,7 @@ image_cross_task:
         # Eventually, hard-code FEDORA_CACHE_IMAGE_NAME here again and remove the
         # VM_IMAGE_NAME parameter.
         image_name: ${VM_IMAGE_NAME}
+    modules_cache: *modules_cache
     env:
         HOME: "/root"  # default unset, needed by golangci-lint.
         VM_IMAGE_NAME: ${FEDORA_CACHE_IMAGE_NAME}
@@ -190,6 +201,7 @@ image_test_task:
     alias: image_test
     only_if: *only_if_image
     gce_instance: *fedora_vm
+    modules_cache: *modules_cache
     env:
         HOME: "/root"  # default unset, needed by golangci-lint.
         GOSRC: "${CIRRUS_WORKING_DIR}/image"
@@ -232,6 +244,7 @@ image_test_skopeo_task:
         SCRIPT_BASE: "./contrib/cirrus"
         # Built along with the standard PR-based workflow in c/automation_images
         SKOPEO_CIDEV_CONTAINER_FQIN: "quay.io/libpod/skopeo_cidev:${IMAGE_SUFFIX}"
+    modules_cache: *modules_cache
     matrix:
         - name: "Image: Skopeo Test"
           env:
@@ -263,9 +276,7 @@ image_test_skopeo_task:
 common_testing_task:
     alias: common_testing
     name: "Common: Test"
-    modules_cache:
-        fingerprint_script: cat common/go.sum
-        folder: $GOPATH/pkg/mod
+    modules_cache: *modules_cache
     env:
         NETAVARK_BINARY: "/usr/libexec/podman/netavark"
     test_script: |
@@ -280,6 +291,7 @@ storage_cross_task:
     name: "Storage: Cross"
     container:
         image: golang:1.24
+    modules_cache: *modules_cache
     build_script: |
       cd storage
       make cross
