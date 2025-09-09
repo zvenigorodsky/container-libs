@@ -85,7 +85,7 @@ storage_linux_testing: &linux_testing
         journal_log_script: '${_JOURNALCMD} || true'
 
 
-storage_fedora_testing_task: &fedora_testing
+storage_fedora_testing_task:
     <<: *linux_testing
     alias: storage_fedora_testing
     only_if: &only_if_storage >-
@@ -113,7 +113,7 @@ storage_fedora_testing_task: &fedora_testing
 
 
 # aufs was dropped between 20.04 and 22.04, can't test it
-storage_debian_testing_task: &storage_debian_testing
+storage_debian_testing_task:
     <<: *linux_testing
     alias: storage_debian_testing
     name: *std_test_name
