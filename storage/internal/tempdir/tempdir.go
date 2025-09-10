@@ -105,7 +105,7 @@ func listPotentialStaleDirs(rootDir string) (map[string]struct{}, error) {
 		if os.IsNotExist(err) {
 			return nil, nil
 		}
-		return nil, fmt.Errorf("error reading temp dir %s: %w", rootDir, err)
+		return nil, fmt.Errorf("error reading temp dir: %w", err)
 	}
 
 	for _, entry := range dirContent {
@@ -128,7 +128,7 @@ func listPotentialStaleDirs(rootDir string) (map[string]struct{}, error) {
 func RecoverStaleDirs(rootDir string) error {
 	potentialStaleDirs, err := listPotentialStaleDirs(rootDir)
 	if err != nil {
-		return fmt.Errorf("error listing potential stale temp dirs in %s: %w", rootDir, err)
+		return fmt.Errorf("error listing potential stale temp dirs: %w", err)
 	}
 
 	if len(potentialStaleDirs) == 0 {
@@ -148,10 +148,10 @@ func RecoverStaleDirs(rootDir string) error {
 		}
 
 		if rmErr := os.RemoveAll(tempDirPath); rmErr != nil && !os.IsNotExist(rmErr) {
-			recoveryErrors = append(recoveryErrors, fmt.Errorf("error removing stale temp dir %s: %w", tempDirPath, rmErr))
+			recoveryErrors = append(recoveryErrors, fmt.Errorf("error removing stale temp dir: %w", rmErr))
 		}
 		if unlockErr := instanceLock.UnlockAndDelete(); unlockErr != nil {
-			recoveryErrors = append(recoveryErrors, fmt.Errorf("error unlocking and deleting stale lock file %s: %w", lockPath, unlockErr))
+			recoveryErrors = append(recoveryErrors, fmt.Errorf("error unlocking and deleting stale lock file: %w", unlockErr))
 		}
 	}
 
@@ -164,7 +164,7 @@ func RecoverStaleDirs(rootDir string) error {
 // Note: The caller MUST ensure that returned TempDir instance is cleaned up with .Cleanup().
 func NewTempDir(rootDir string) (*TempDir, error) {
 	if err := os.MkdirAll(rootDir, 0o700); err != nil {
-		return nil, fmt.Errorf("creating root temp directory %s failed: %w", rootDir, err)
+		return nil, fmt.Errorf("creating root temp directory failed: %w", err)
 	}
 
 	td := &TempDir{
@@ -172,7 +172,7 @@ func NewTempDir(rootDir string) (*TempDir, error) {
 	}
 	tempDirLock, tempDirLockFileName, err := staging_lockfile.CreateAndLock(td.RootDir, tempdirLockPrefix)
 	if err != nil {
-		return nil, fmt.Errorf("creating and locking temp dir instance lock in %s failed: %w", td.RootDir, err)
+		return nil, fmt.Errorf("creating and locking temp dir instance lock failed: %w", err)
 	}
 	td.tempDirLock = tempDirLock
 	td.tempDirLockPath = filepath.Join(td.RootDir, tempDirLockFileName)
@@ -181,7 +181,7 @@ func NewTempDir(rootDir string) (*TempDir, error) {
 	id := strings.TrimPrefix(tempDirLockFileName, tempdirLockPrefix)
 	actualTempDirPath := filepath.Join(td.RootDir, tempDirPrefix+id)
 	if err := os.MkdirAll(actualTempDirPath, 0o700); err != nil {
-		return nil, fmt.Errorf("creating temp directory %s failed: %w", actualTempDirPath, err)
+		return nil, fmt.Errorf("creating temp directory failed: %w", err)
 	}
 	td.tempDirPath = actualTempDirPath
 	td.counter = 0
@@ -218,7 +218,7 @@ func (td *TempDir) Cleanup() error {
 	}
 
 	if err := os.RemoveAll(td.tempDirPath); err != nil && !os.IsNotExist(err) {
-		return fmt.Errorf("removing temp dir %s failed: %w", td.tempDirPath, err)
+		return fmt.Errorf("removing temp dir failed: %w", err)
 	}
 
 	lock := td.tempDirLock
