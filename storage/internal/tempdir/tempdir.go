@@ -147,7 +147,7 @@ func RecoverStaleDirs(rootDir string) error {
 			continue
 		}
 
-		if rmErr := os.RemoveAll(tempDirPath); rmErr != nil && !os.IsNotExist(rmErr) {
+		if rmErr := os.RemoveAll(tempDirPath); rmErr != nil {
 			recoveryErrors = append(recoveryErrors, fmt.Errorf("error removing stale temp dir: %w", rmErr))
 		}
 		if unlockErr := instanceLock.UnlockAndDelete(); unlockErr != nil {
@@ -217,7 +217,7 @@ func (td *TempDir) Cleanup() error {
 		return nil
 	}
 
-	if err := os.RemoveAll(td.tempDirPath); err != nil && !os.IsNotExist(err) {
+	if err := os.RemoveAll(td.tempDirPath); err != nil {
 		return fmt.Errorf("removing temp dir failed: %w", err)
 	}
 
