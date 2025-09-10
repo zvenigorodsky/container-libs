@@ -3,6 +3,7 @@ package tempdir
 import (
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -102,7 +103,7 @@ func listPotentialStaleDirs(rootDir string) (map[string]struct{}, error) {
 
 	dirContent, err := os.ReadDir(rootDir)
 	if err != nil {
-		if os.IsNotExist(err) {
+		if errors.Is(err, fs.ErrNotExist) {
 			return nil, nil
 		}
 		return nil, fmt.Errorf("error reading temp dir: %w", err)
