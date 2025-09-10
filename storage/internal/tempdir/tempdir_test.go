@@ -36,8 +36,7 @@ func TestTempDirAdd(t *testing.T) {
 	assert.True(t, strings.HasPrefix(files[0].Name(), "0-"))
 	assert.True(t, strings.HasSuffix(files[0].Name(), "testfile.txt"))
 
-	_, err = os.Stat(filePath)
-	assert.True(t, os.IsNotExist(err))
+	assert.NoFileExists(t, filePath)
 }
 
 func TestTempDirAddMultipleFiles(t *testing.T) {
@@ -80,17 +79,13 @@ func TestTempDirCleanup(t *testing.T) {
 	tempDirPath := td.tempDirPath
 	lockPath := td.tempDirLockPath
 
-	_, err = os.Stat(tempDirPath)
-	assert.NoError(t, err)
-	_, err = os.Stat(lockPath)
-	assert.NoError(t, err)
+	assert.DirExists(t, tempDirPath)
+	assert.FileExists(t, lockPath)
 
 	require.NoError(t, td.Cleanup())
 
-	_, err = os.Stat(tempDirPath)
-	assert.True(t, os.IsNotExist(err))
-	_, err = os.Stat(lockPath)
-	assert.True(t, os.IsNotExist(err))
+	assert.NoDirExists(t, tempDirPath)
+	assert.NoFileExists(t, lockPath)
 
 	assert.Empty(t, td.tempDirPath)
 	assert.Nil(t, td.tempDirLock)
@@ -168,17 +163,13 @@ func TestRecoverStaleDirs(t *testing.T) {
 	require.NoError(t, os.WriteFile(filepath.Join(staleDir, "somefile"), []byte("data"), 0o644))
 	require.NoError(t, os.WriteFile(staleLock, []byte{}, 0o644))
 
-	_, err := os.Stat(staleDir)
-	assert.NoError(t, err)
-	_, err = os.Stat(staleLock)
-	assert.NoError(t, err)
+	assert.DirExists(t, staleDir)
+	assert.FileExists(t, staleLock)
 
 	assert.NoError(t, RecoverStaleDirs(rootDir))
 
-	_, err = os.Stat(staleDir)
-	assert.True(t, os.IsNotExist(err))
-	_, err = os.Stat(staleLock)
-	assert.True(t, os.IsNotExist(err))
+	assert.NoDirExists(t, staleDir)
+	assert.NoFileExists(t, staleLock)
 }
 
 func TestRecoverStaleDirsSkipsActiveDirs(t *testing.T) {
@@ -204,15 +195,11 @@ func TestRecoverStaleDirsSkipsActiveDirs(t *testing.T) {
 
 	assert.NoError(t, RecoverStaleDirs(rootDir))
 
-	_, err = os.Stat(activeTempDir)
-	assert.NoError(t, err)
-	_, err = os.Stat(activeLock)
-	assert.NoError(t, err)
+	assert.DirExists(t, activeTempDir)
+	assert.FileExists(t, activeLock)
 
-	_, err = os.Stat(staleDir)
-	assert.True(t, os.IsNotExist(err))
-	_, err = os.Stat(staleLock)
-	assert.True(t, os.IsNotExist(err))
+	assert.NoDirExists(t, staleDir)
+	assert.NoFileExists(t, staleLock)
 }
 
 func TestTempDirMultipleInstances(t *testing.T) {
