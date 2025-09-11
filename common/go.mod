@@ -2,7 +2,7 @@ module go.podman.io/common
 
 // Warning: Ensure the "go" and "toolchain" versions match exactly to prevent unwanted auto-updates
 
-go 1.24.0
+go 1.24.2
 
 require (
 	github.com/BurntSushi/toml v1.5.0
@@ -10,7 +10,7 @@ require (
 	github.com/checkpoint-restore/go-criu/v7 v7.2.0
 	github.com/containerd/platforms v0.2.1
 	github.com/containernetworking/cni v1.3.0
-	github.com/containernetworking/plugins v1.7.1
+	github.com/containernetworking/plugins v1.8.0
 	github.com/containers/ocicrypt v1.2.1
 	github.com/coreos/go-systemd/v22 v22.6.0
 	github.com/cyphar/filepath-securejoin v0.4.1
@@ -81,7 +81,7 @@ require (
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/go-containerregistry v0.20.4-0.20250225234217-098045d5e61f // indirect
 	github.com/google/go-intervals v0.0.2 // indirect
-	github.com/google/pprof v0.0.0-20250403155104-27863c87afa6 // indirect
+	github.com/google/pprof v0.0.0-20250820193118-f64d9cf942d6 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
