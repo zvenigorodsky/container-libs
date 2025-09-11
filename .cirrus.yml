@@ -36,7 +36,7 @@ env:
     # package is not available in earlier releases; once we update to a future
     # Fedora release (or if the package is backported), switch back from Rawhide
     # to the latest Fedora release.
-    IMAGE_SUFFIX: "c20250812t173301z-f42f41d13"
+    IMAGE_SUFFIX: "c20250910t092246z-f42f41d13"
     RAWHIDE_CACHE_IMAGE_NAME: "rawhide-${IMAGE_SUFFIX}"
 
     FEDORA_CACHE_IMAGE_NAME: "fedora-${IMAGE_SUFFIX}"
@@ -131,6 +131,9 @@ storage_debian_testing_task:
     env:
         OS_NAME: "${DEBIAN_NAME}"
         VM_IMAGE: "${DEBIAN_CACHE_IMAGE_NAME}"
+        # /tmp is a tmpfs, and as of 2025-09-11 we are using Debian images with Linux 6.1, where tmpfs does not support extended attributes.
+        # That prevents testing various graph drivers; setting TMPDIR changes where graph driver tests place their roots.
+        TMPDIR: "/var/tmp"
     # Not all $TEST_DRIVER combinations valid for all $VM_IMAGE types.
     matrix:
         - env:
