@@ -22,44 +22,6 @@ func searchOptions(options []string, value string) bool {
 	return false
 }
 
-func TestAufsOptions(t *testing.T) {
-	var (
-		doptions []string
-		options  OptionsConfig
-	)
-	doptions = GetGraphDriverOptions("aufs", options)
-	if len(doptions) != 0 {
-		t.Fatalf("Expected 0 options, got %v", doptions)
-	}
-	// Make sure legacy mountopt still works
-	options = OptionsConfig{}
-	options.MountOpt = foobar
-	doptions = GetGraphDriverOptions("aufs", options)
-	if len(doptions) == 0 {
-		t.Fatalf("Expected 0 options, got %v", doptions)
-	}
-	if !searchOptions(doptions, "mountopt=foobar") {
-		t.Fatalf("Expected to find 'foobar' options, got %v", doptions)
-	}
-
-	// Make sure Aufs ignores other drivers mountpoints takes presedence
-	options.Zfs.MountOpt = nodev
-	doptions = GetGraphDriverOptions("aufs", options)
-	if searchOptions(doptions, "mountopt=nodev") {
-		t.Fatalf("Expected to find 'nodev' options, got %v", doptions)
-	}
-
-	// Make sure AufsMountOpt takes precedence
-	options.Aufs.MountOpt = nodev
-	doptions = GetGraphDriverOptions("aufs", options)
-	if len(doptions) == 0 {
-		t.Fatalf("Expected 0 options, got %v", doptions)
-	}
-	if !searchOptions(doptions, "mountopt=nodev") {
-		t.Fatalf("Expected to find 'nodev' options, got %v", doptions)
-	}
-}
-
 func TestBtrfsOptions(t *testing.T) {
 	var (
 		doptions []string
@@ -273,7 +235,7 @@ func TestZfsOptions(t *testing.T) {
 		t.Fatalf("Expected to find 'foobar' options, got %v", doptions)
 	}
 	// Make sure Zfs ignores other drivers mountpoints takes presedence
-	options.Aufs.MountOpt = nodev
+	options.Overlay.MountOpt = nodev
 	doptions = GetGraphDriverOptions("zfs", options)
 	if searchOptions(doptions, "mountopt=nodev") {
 		t.Fatalf("Expected Not to find 'nodev' options, got %v", doptions)

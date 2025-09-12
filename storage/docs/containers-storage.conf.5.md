@@ -27,7 +27,7 @@ No bare options are used. The format of TOML can be simplified to:
 The `storage` table supports the following options:
 
 **driver**=""
-  Copy On Write (COW) container storage driver. Valid drivers are "overlay", "vfs", "aufs", "btrfs", and "zfs". Some drivers (for example, "zfs", "btrfs", and "aufs") may not work if your kernel lacks support for the filesystem.
+  Copy On Write (COW) container storage driver. Valid drivers are "overlay", "vfs", "btrfs", and "zfs". Some drivers (for example, "zfs" and "btrfs") may not work if your kernel lacks support for the filesystem.
 This field is required to guarantee proper operation.
 Valid rootless drivers are "btrfs", "overlay", and "vfs".
 Rootless users default to the driver defined in the system configuration when possible.
@@ -145,13 +145,6 @@ The `storage.options.pull_options` table supports the following keys:
 
   This is a "string bool": "false"|"true" (cannot be native TOML boolean)
 
-### STORAGE OPTIONS FOR AUFS TABLE
-
-The `storage.options.aufs` table supports the following options:
-
-**mountopt**=""
-  Comma separated list of default options to be used to mount container images.  Suggested value "nodev". Mount options are documented in the mount(8) man page.
-
 ### STORAGE OPTIONS FOR BTRFS TABLE
 
 The `storage.options.btrfs` table supports the following options:
@@ -210,7 +203,7 @@ attribute permissions to processes within containers rather than the
 for mounting the file system. In rootless mode, without the CAP_SYS_ADMIN
 capability, many kernels prevent mounting of overlay file systems, requiring
 you to specify a mount_program. The mount_program option is also required on
-systems where the underlying storage is btrfs, aufs, zfs, overlay, or ecryptfs
+systems where the underlying storage is btrfs, zfs, overlay, or ecryptfs
 based file systems.
   mount_program = "/usr/bin/fuse-overlayfs"
 

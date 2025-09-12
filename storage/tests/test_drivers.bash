@@ -2,13 +2,8 @@
 
 TMPDIR=${TMPDIR:-/var/tmp}
 
-aufs() {
-	modprobe aufs 2> /dev/null
-	grep -E -q '	aufs$' /proc/filesystems
-}
-
 btrfs() {
-	[ $(stat -f -c %T ${TMPDIR}) = btrfs ] 
+	[ $(stat -f -c %T ${TMPDIR}) = btrfs ]
 }
 
 overlay() {
@@ -22,9 +17,6 @@ zfs() {
 
 if [ "$STORAGE_DRIVER" = "" ] ; then
 	drivers=vfs
-	if aufs ; then
-		drivers="$drivers aufs"
-	fi
 	if btrfs; then
 		drivers="$drivers btrfs"
 	fi
