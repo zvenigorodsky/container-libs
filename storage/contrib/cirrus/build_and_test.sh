@@ -25,9 +25,6 @@ case $TEST_DRIVER in
     vfs)
         showrun make STORAGE_DRIVER=vfs local-test-integration local-test-unit
         ;;
-    aufs)
-        showrun make STORAGE_DRIVER=aufs local-test-integration local-test-unit
-        ;;
     btrfs)
         # Fedora: Needs btrfs-progs, btrfs-progs-devel
         # Debian: Needs btrfs-progs, libbtrfs-dev
