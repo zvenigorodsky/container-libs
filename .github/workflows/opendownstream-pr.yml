@@ -71,16 +71,30 @@ jobs:
           BRANCH_NAME="sync/container-libs-${{ github.event.pull_request.number }}"
           git switch $BRANCH_NAME
 
+          # Check if there are any changes to commit
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "No changes to commit, skipping..."
+            echo "SKIP_PR=true" >> $GITHUB_ENV
+            exit 0
+          fi
+
           git add .
           git commit -m "dnm: Vendor changes from containers/container-libs#${{ github.event.pull_request.number }}"
 
           # Force push to update the branch if the action re-runs on 'synchronize'
           git push origin $BRANCH_NAME --force
 
+          # Verify the branch exists remotely
+          if ! git ls-remote --heads origin $BRANCH_NAME | grep -q $BRANCH_NAME; then
+            echo "Failed to push branch $BRANCH_NAME"
+            exit 1
+          fi
+
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
       - name: 'Create or Update Pull Request in Buildah'
         id: create_pr
+        if: env.SKIP_PR != 'true'
         env:
           GH_TOKEN: ${{ secrets.VENDOR_TOKEN_PODMANBOT }}
           SELF_REPO_PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -91,12 +105,12 @@ jobs:
 
           BRANCH_NAME="sync/container-libs-${{ github.event.pull_request.number }}"
           PR_TITLE="Sync: ${{ env.SELF_REPO_PR_TITLE }}"
-          PR_BODY="This PR automatically vendors changes from [repo-A#${{ env.SELF_REPO_PR_NUMBER }}](${{ env.SELF_REPO_PR_URL }})."
+          PR_BODY="This PR automatically vendors changes from [container-libs#${{ env.SELF_REPO_PR_NUMBER }}](${{ env.SELF_REPO_PR_URL }})."
 
           # Check if PR already exists for this branch
           echo "Searching for existing PR with branch: $BRANCH_NAME"
 
-          EXISTING_PR_URL=$(gh pr list --repo containers/buildah --head "$BRANCH_NAME" --json url --jq '.[0].url // empty' 2>/dev/null || echo "")
+          EXISTING_PR_URL=$(gh pr list --repo containers/buildah --head "podmanbot:$BRANCH_NAME" --json url --jq '.[0].url // empty' 2>/dev/null || echo "")
 
           if [ -n "$EXISTING_PR_URL" ]; then
             echo "Found existing PR: $EXISTING_PR_URL"
@@ -109,11 +123,12 @@ jobs:
             echo "pr_action=updated" >> $GITHUB_OUTPUT
           else
             # Create new PR
+            echo "Creating new PR with head: podmanbot:$BRANCH_NAME"
             NEW_PR_URL=$(gh pr create \
               --repo containers/buildah \
               --draft \
               --base main \
-              --head "podmanbot/buildah:$BRANCH_NAME" \
+              --head "podmanbot:$BRANCH_NAME" \
               --title "$PR_TITLE" \
               --body "$PR_BODY")
             echo "Created new PR: $NEW_PR_URL"
@@ -122,6 +137,7 @@ jobs:
           fi
 
       - name: 'Comment on container-libs PR with the link to buildah PR'
+        if: env.SKIP_PR != 'true'
         env:
           GH_TOKEN: ${{ secrets.VENDOR_TOKEN_PODMANBOT }}
           SELF_REPO_PR_NUMBER: ${{ github.event.pull_request.number }}
