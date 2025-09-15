@@ -113,7 +113,7 @@ jobs:
               --repo containers/buildah \
               --draft \
               --base main \
-              --head "$BRANCH_NAME" \
+              --head "podmanbot/buildah:$BRANCH_NAME" \
               --title "$PR_TITLE" \
               --body "$PR_BODY")
             echo "Created new PR: $NEW_PR_URL"
