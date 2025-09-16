@@ -110,7 +110,7 @@ jobs:
           # Check if PR already exists for this branch
           echo "Searching for existing PR with branch: $BRANCH_NAME"
 
-          EXISTING_PR_URL=$(gh pr list --repo containers/buildah --head "podmanbot:$BRANCH_NAME" --json url --jq '.[0].url // empty' 2>/dev/null || echo "")
+          EXISTING_PR_URL=$(gh pr list --repo containers/buildah --head "$BRANCH_NAME" --json url --jq '.[0].url // empty' 2>/dev/null || echo "")
 
           if [ -n "$EXISTING_PR_URL" ]; then
             echo "Found existing PR: $EXISTING_PR_URL"
