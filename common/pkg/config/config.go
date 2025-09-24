@@ -708,11 +708,11 @@ type Destination struct {
 	Identity string `json:",omitempty" toml:"identity,omitempty"`
 
 	// Path to TLS client certificate PEM file, optional
-	TLSCertFile string `json:",omitempty" toml:"tls_cert_file,omitempty"`
+	TLSCert string `json:",omitempty" toml:"tls_cert,omitempty"`
 	// Path to TLS client certificate private key PEM file, optional
-	TLSKeyFile string `json:",omitempty" toml:"tls_key_file,omitempty"`
+	TLSKey string `json:",omitempty" toml:"tls_key,omitempty"`
 	// Path to TLS certificate authority PEM file, optional
-	TLSCAFile string `json:",omitempty" toml:"tls_ca_file,omitempty"`
+	TLSCA string `json:",omitempty" toml:"tls_ca,omitempty"`
 
 	// isMachine describes if the remote destination is a machine.
 	IsMachine bool `json:",omitempty" toml:"is_machine,omitempty"`

@@ -105,7 +105,7 @@ var _ = Describe("Connections conf", func() {
 	})
 
 	Context("GetConnection/Farm", func() {
-		const defConnectionsConf = `{"Connection":{"Default":"test","Connections":{"test":{"URI":"ssh://podman.io"},"QA":{"URI":"ssh://test","Identity":".ssh/id","IsMachine":true},"TLS": {"URI": "tcp://podman.io:443", "TLSCAFile":"/path/to/ca.pem"},"mTLS":{"URI": "tcp://podman.io:443/subpath", "TLSCAFile": "/path/to/ca.pem", "TLSCertFile": "/path/to/tls.crt", "TLSKeyFile": "/path/to/tls.key"}}},"farm":{"Default":"farm1","List":{"farm1":["test"]}}}`
+		const defConnectionsConf = `{"Connection":{"Default":"test","Connections":{"test":{"URI":"ssh://podman.io"},"QA":{"URI":"ssh://test","Identity":".ssh/id","IsMachine":true},"TLS": {"URI": "tcp://podman.io:443", "TLSCA":"/path/to/ca.pem"},"mTLS":{"URI": "tcp://podman.io:443/subpath", "TLSCA": "/path/to/ca.pem", "TLSCert": "/path/to/tls.crt", "TLSKey": "/path/to/tls.key"}}},"farm":{"Default":"farm1","List":{"farm1":["test"]}}}`
 		const defContainersConf = `
 [engine]
   active_service = "containers"
@@ -164,7 +164,7 @@ var _ = Describe("Connections conf", func() {
 				Name:        "TLS",
 				Default:     false,
 				ReadWrite:   true,
-				Destination: Destination{URI: "tcp://podman.io:443", TLSCAFile: "/path/to/ca.pem"},
+				Destination: Destination{URI: "tcp://podman.io:443", TLSCA: "/path/to/ca.pem"},
 			}))
 
 			con, err = conf.GetConnection("mTLS", false)
@@ -173,7 +173,7 @@ var _ = Describe("Connections conf", func() {
 				Name:        "mTLS",
 				Default:     false,
 				ReadWrite:   true,
-				Destination: Destination{URI: "tcp://podman.io:443/subpath", TLSCAFile: "/path/to/ca.pem", TLSCertFile: "/path/to/tls.crt", TLSKeyFile: "/path/to/tls.key"},
+				Destination: Destination{URI: "tcp://podman.io:443/subpath", TLSCA: "/path/to/ca.pem", TLSCert: "/path/to/tls.crt", TLSKey: "/path/to/tls.key"},
 			}))
 
 			con, err = conf.GetConnection("containers", false)
