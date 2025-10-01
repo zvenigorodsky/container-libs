@@ -69,7 +69,7 @@ func chmodTarEntry(perm os.FileMode) os.FileMode {
 	return perm // noop for unix as golang APIs provide perm bits correctly
 }
 
-func setHeaderForSpecialDevice(hdr *tar.Header, name string, stat any) (err error) {
+func setHeaderForSpecialDevice(hdr *tar.Header, name string, stat any) {
 	s, ok := stat.(*syscall.Stat_t)
 
 	if ok {
@@ -82,8 +82,6 @@ func setHeaderForSpecialDevice(hdr *tar.Header, name string, stat any) (err erro
 			hdr.Devminor = int64(minor(uint64(s.Rdev))) //nolint: unconvert,nolintlint
 		}
 	}
-
-	return err
 }
 
 func getInodeFromStat(stat any) (inode uint64) {

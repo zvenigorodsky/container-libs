@@ -34,7 +34,7 @@ func joinTrailingSep(pathElements ...string) string {
 	return fmt.Sprintf("%s%c", joined, filepath.Separator)
 }
 
-func fileContentsEqual(t *testing.T, filenameA, filenameB string) (err error) {
+func fileContentsEqual(t *testing.T, filenameA, filenameB string) error {
 	t.Logf("checking for equal file contents: %q and %q\n", filenameA, filenameB)
 
 	fileA, err := os.Open(filenameA)
