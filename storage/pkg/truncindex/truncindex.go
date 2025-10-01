@@ -54,7 +54,7 @@ func NewTruncIndex(ids []string) (idx *TruncIndex) {
 	for _, id := range ids {
 		_ = idx.addID(id) // Ignore invalid IDs. Duplicate IDs are not a problem.
 	}
-	return
+	return idx
 }
 
 func (idx *TruncIndex) addID(id string) error {

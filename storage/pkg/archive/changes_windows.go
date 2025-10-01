@@ -21,7 +21,7 @@ func (info *FileInfo) isDir() bool {
 }
 
 func getIno(fi os.FileInfo) (inode uint64) {
-	return
+	return inode
 }
 
 func hasHardlinks(fi os.FileInfo) bool {

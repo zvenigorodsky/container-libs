@@ -164,7 +164,7 @@ func (gdw *NaiveDiffDriver) ApplyDiff(id, parent string, options ApplyDiffOpts) 
 	}
 	layerFs, err := driver.Get(id, mountOpts)
 	if err != nil {
-		return
+		return size, err
 	}
 	defer driverPut(driver, id, &err)
 
@@ -187,11 +187,11 @@ func (gdw *NaiveDiffDriver) ApplyDiff(id, parent string, options ApplyDiffOpts) 
 	logrus.Debug("Start untar layer")
 	if size, err = ApplyUncompressedLayer(layerFs, options.Diff, tarOptions); err != nil {
 		logrus.Errorf("While applying layer: %s", err)
-		return
+		return size, err
 	}
 	logrus.Debugf("Untar time: %vs", time.Now().UTC().Sub(start).Seconds())
 
-	return
+	return size, err
 }
 
 // DiffSize calculates the changes between the specified layer
@@ -209,7 +209,7 @@ func (gdw *NaiveDiffDriver) DiffSize(id string, idMappings *idtools.IDMappings, 
 
 	changes, err := gdw.Changes(id, idMappings, parent, parentMappings, mountLabel)
 	if err != nil {
-		return
+		return size, err
 	}
 
 	options := MountOpts{
@@ -217,7 +217,7 @@ func (gdw *NaiveDiffDriver) DiffSize(id string, idMappings *idtools.IDMappings, 
 	}
 	layerFs, err := driver.Get(id, options)
 	if err != nil {
-		return
+		return size, err
 	}
 	defer driverPut(driver, id, &err)
 

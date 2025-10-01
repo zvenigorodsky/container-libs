@@ -48,5 +48,5 @@ func Usage(dir string) (usage *DiskUsage, err error) {
 
 		return nil
 	})
-	return
+	return usage, err
 }

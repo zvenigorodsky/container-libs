@@ -328,17 +328,17 @@ func makeTestLayer(t *testing.T, paths []string) (rc io.ReadCloser, err error) {
 	for _, p := range paths {
 		if p[len(p)-1] == filepath.Separator {
 			if err = os.MkdirAll(filepath.Join(tmpDir, p), 0o700); err != nil {
-				return
+				return rc, err
 			}
 		} else {
 			if err = os.WriteFile(filepath.Join(tmpDir, p), nil, 0o600); err != nil {
-				return
+				return rc, err
 			}
 		}
 	}
 	archive, err := Tar(tmpDir, Uncompressed)
 	if err != nil {
-		return
+		return rc, err
 	}
 	return ioutils.NewReadCloserWrapper(archive, func() error {
 		err := archive.Close()

@@ -158,7 +158,7 @@ func (bp *BytesPipe) Read(p []byte) (n int, err error) {
 
 	bp.wait.Broadcast()
 	bp.mu.Unlock()
-	return
+	return n, err
 }
 
 func returnBuffer(b *fixedBuffer) {

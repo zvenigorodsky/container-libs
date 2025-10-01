@@ -83,7 +83,7 @@ func setHeaderForSpecialDevice(hdr *tar.Header, name string, stat any) (err erro
 		}
 	}
 
-	return
+	return err
 }
 
 func getInodeFromStat(stat any) (inode uint64) {
@@ -93,7 +93,7 @@ func getInodeFromStat(stat any) (inode uint64) {
 		inode = s.Ino
 	}
 
-	return
+	return inode
 }
 
 func getFileUIDGID(stat any) (idtools.IDPair, error) {

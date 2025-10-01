@@ -99,7 +99,7 @@ func TarResourceRebase(sourcePath, rebaseName string) (content io.ReadCloser, er
 		// Catches the case where the source does not exist or is not a
 		// directory if asserted to be a directory, as this also causes an
 		// error.
-		return
+		return content, err
 	}
 
 	// Separate the source path between its directory and
@@ -411,7 +411,7 @@ func ResolveHostSourcePath(path string, followLink bool) (resolvedPath, rebaseNa
 	if followLink {
 		resolvedPath, err = filepath.EvalSymlinks(path)
 		if err != nil {
-			return
+			return resolvedPath, rebaseName, err
 		}
 
 		resolvedPath, rebaseName = GetRebaseName(path, resolvedPath)
@@ -422,7 +422,7 @@ func ResolveHostSourcePath(path string, followLink bool) (resolvedPath, rebaseNa
 		var resolvedDirPath string
 		resolvedDirPath, err = filepath.EvalSymlinks(dirPath)
 		if err != nil {
-			return
+			return resolvedPath, rebaseName, err
 		}
 		// resolvedDirPath will have been cleaned (no trailing path separators) so
 		// we can manually join it with the base path element.

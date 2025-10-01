@@ -54,12 +54,12 @@ func chmodTarEntry(perm os.FileMode) os.FileMode {
 
 func setHeaderForSpecialDevice(hdr *tar.Header, name string, stat interface{}) (err error) {
 	// do nothing. no notion of Rdev, Nlink in stat on Windows
-	return
+	return err
 }
 
 func getInodeFromStat(stat interface{}) (inode uint64) {
 	// do nothing. no notion of Inode in stat on Windows
-	return
+	return inode
 }
 
 // handleTarTypeBlockCharFifo is an OS-specific helper function used by

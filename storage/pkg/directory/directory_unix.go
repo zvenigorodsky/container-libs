@@ -58,5 +58,5 @@ func Usage(dir string) (usage *DiskUsage, err error) {
 	})
 	// inode count is the number of unique inode numbers we saw
 	usage.InodeCount = int64(len(data))
-	return
+	return usage, err
 }

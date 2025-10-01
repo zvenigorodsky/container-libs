@@ -63,7 +63,7 @@ func Copy(dst io.Writer, src io.Reader) (written int64, err error) {
 	buf := BufioReader32KPool.Get(src)
 	written, err = io.Copy(dst, buf)
 	BufioReader32KPool.Put(buf)
-	return
+	return written, err
 }
 
 // NewReadCloserWrapper returns a wrapper which puts the bufio.Reader back

@@ -55,5 +55,5 @@ func parseStringPairs(input ...string) (output [][2]string) {
 		}
 		output = append(output, pair)
 	}
-	return
+	return output
 }
