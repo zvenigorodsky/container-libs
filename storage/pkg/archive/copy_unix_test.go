@@ -34,32 +34,32 @@ func joinTrailingSep(pathElements ...string) string {
 	return fmt.Sprintf("%s%c", joined, filepath.Separator)
 }
 
-func fileContentsEqual(t *testing.T, filenameA, filenameB string) (err error) {
+func fileContentsEqual(t *testing.T, filenameA, filenameB string) error {
 	t.Logf("checking for equal file contents: %q and %q\n", filenameA, filenameB)
 
 	fileA, err := os.Open(filenameA)
 	if err != nil {
-		return
+		return err
 	}
 	defer fileA.Close()
 
 	fileB, err := os.Open(filenameB)
 	if err != nil {
-		return
+		return err
 	}
 	defer fileB.Close()
 
 	hasher := sha256.New()
 
 	if _, err = io.Copy(hasher, fileA); err != nil {
-		return
+		return err
 	}
 
 	hashA := hasher.Sum(nil)
 	hasher.Reset()
 
 	if _, err = io.Copy(hasher, fileB); err != nil {
-		return
+		return err
 	}
 
 	hashB := hasher.Sum(nil)
@@ -68,7 +68,7 @@ func fileContentsEqual(t *testing.T, filenameA, filenameB string) (err error) {
 		err = fmt.Errorf("file content hashes not equal - expected %s, got %s", hex.EncodeToString(hashA), hex.EncodeToString(hashB))
 	}
 
-	return
+	return err
 }
 
 func dirContentsEqual(t *testing.T, newDir, oldDir string) (err error) {
@@ -77,14 +77,14 @@ func dirContentsEqual(t *testing.T, newDir, oldDir string) (err error) {
 	var changes []Change
 
 	if changes, err = ChangesDirs(newDir, &idtools.IDMappings{}, oldDir, &idtools.IDMappings{}); err != nil {
-		return
+		return err
 	}
 
 	if len(changes) != 0 {
 		err = fmt.Errorf("expected no changes between directories, but got: %v", changes)
 	}
 
-	return
+	return err
 }
 
 func logDirContents(t *testing.T, dirPath string) {

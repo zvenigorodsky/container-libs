@@ -323,22 +323,22 @@ func TestApplyLayerWhiteouts(t *testing.T) {
 	}
 }
 
-func makeTestLayer(t *testing.T, paths []string) (rc io.ReadCloser, err error) {
+func makeTestLayer(t *testing.T, paths []string) (io.ReadCloser, error) {
 	tmpDir := t.TempDir()
 	for _, p := range paths {
 		if p[len(p)-1] == filepath.Separator {
-			if err = os.MkdirAll(filepath.Join(tmpDir, p), 0o700); err != nil {
-				return
+			if err := os.MkdirAll(filepath.Join(tmpDir, p), 0o700); err != nil {
+				return nil, err
 			}
 		} else {
-			if err = os.WriteFile(filepath.Join(tmpDir, p), nil, 0o600); err != nil {
-				return
+			if err := os.WriteFile(filepath.Join(tmpDir, p), nil, 0o600); err != nil {
+				return nil, err
 			}
 		}
 	}
 	archive, err := Tar(tmpDir, Uncompressed)
 	if err != nil {
-		return
+		return nil, err
 	}
 	return ioutils.NewReadCloserWrapper(archive, func() error {
 		err := archive.Close()
