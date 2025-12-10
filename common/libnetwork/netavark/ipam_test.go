@@ -558,4 +558,70 @@ var _ = Describe("IPAM", func() {
 		Expect(opts.Networks[netName].StaticIPs).To(HaveLen(1))
 		Expect(opts.Networks[netName].StaticIPs[0]).To(Equal(net.ParseIP("10.0.0.10").To4()))
 	})
+
+	DescribeTable("ipam alloc and dealloc multiple static IPs",
+		func(subnetStrs []string, staticStrs []string, expectedTotal int) {
+			subnets := make([]types.Subnet, 0, len(subnetStrs))
+			for _, s := range subnetStrs {
+				sn, _ := types.ParseCIDR(s)
+				subnets = append(subnets, types.Subnet{Subnet: sn})
+			}
+
+			network, err := networkInterface.NetworkCreate(
+				types.Network{Subnets: subnets},
+				nil,
+			)
+			Expect(err).ToNot(HaveOccurred())
+
+			netName := network.Name
+
+			staticIPs := make([]net.IP, 0, len(staticStrs))
+			for _, ip := range staticStrs {
+				staticIPs = append(staticIPs, net.ParseIP(ip))
+			}
+
+			opts := &types.NetworkOptions{
+				ContainerID: "someContainerID",
+				Networks: map[string]types.PerNetworkOptions{
+					netName: {StaticIPs: staticIPs},
+				},
+			}
+
+			err = networkInterface.allocIPs(opts)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(opts.Networks).To(HaveKey(netName))
+			Expect(opts.Networks[netName].StaticIPs).To(HaveLen(expectedTotal))
+			for _, ip := range staticIPs {
+				Expect(opts.Networks[netName].StaticIPs).To(ContainElement(WithTransform(func(i net.IP) string { return i.String() }, Equal(ip.String()))))
+			}
+
+			err = networkInterface.deallocIPs(opts)
+			Expect(err).ToNot(HaveOccurred())
+		},
+		Entry("ipv4 single subnet",
+			[]string{"10.89.0.0/16"},
+			[]string{"10.89.0.5", "10.89.0.10", "10.89.0.15"},
+			3,
+		),
+		Entry("ipv4 two subnets",
+			[]string{"10.89.0.0/16", "10.90.0.0/16"},
+			[]string{"10.89.0.5", "10.90.0.10", "10.89.0.15"},
+			3,
+		),
+		Entry("ipv6 single subnet",
+			[]string{"fd80::/64"},
+			[]string{"fd80::5", "fd80::10", "fd80::15"},
+			3,
+		),
+		Entry("ipv6 two subnets",
+			[]string{"fd80::/64", "fd81::/64"},
+			[]string{"fd80::5", "fd81::10", "fd80::15"},
+			3,
+		),
+		Entry("mixed ipv6 static and automatic ipv4",
+			[]string{"10.200.0.0/24", "fd82::/64"},
+			[]string{"fd82::5", "fd82::15"},
+			3,
+		),
+	)
 })
