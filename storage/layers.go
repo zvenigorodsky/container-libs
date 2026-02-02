@@ -2695,7 +2695,7 @@ func applyDiff(layerOptions *LayerOptions, diff io.Reader, tarSplitFile *os.File
 }
 
 // Requires startWriting.
-func (r *layerStore) applyDiffWithOptions(to string, layerOptions *LayerOptions, diff io.Reader) (_ int64, retErr error) {
+func (r *layerStore) applyDiffWithOptions(to string, layerOptions *LayerOptions, diff io.Reader) (int64, error) {
 	if !r.lockfile.IsReadWrite() {
 		return -1, fmt.Errorf("not allowed to modify layer contents at %q: %w", r.layerdir, ErrStoreIsReadOnly)
 	}
@@ -2709,11 +2709,10 @@ func (r *layerStore) applyDiffWithOptions(to string, layerOptions *LayerOptions,
 	if err != nil {
 		return -1, err
 	}
-	// make sure to check for errors on close and return that one.
+	tarSplitClosed := false
 	defer func() {
-		closeErr := tarSplitFile.Close()
-		if retErr == nil {
-			retErr = closeErr
+		if !tarSplitClosed {
+			tarSplitFile.Close()
 		}
 	}()
 
@@ -2726,6 +2725,11 @@ func (r *layerStore) applyDiffWithOptions(to string, layerOptions *LayerOptions,
 		return r.driver.ApplyDiff(layer.ID, options)
 	})
 	if err != nil {
+		return -1, err
+	}
+
+	tarSplitClosed = true
+	if err := tarSplitFile.Close(); err != nil {
 		return -1, err
 	}
 
@@ -2763,7 +2767,7 @@ func (r *layerStore) DifferTarget(id string) (string, error) {
 }
 
 // Requires startWriting.
-func (r *layerStore) applyDiffFromStagingDirectory(id string, diffOutput *drivers.DriverWithDifferOutput, options *drivers.ApplyDiffWithDifferOpts) (retErr error) {
+func (r *layerStore) applyDiffFromStagingDirectory(id string, diffOutput *drivers.DriverWithDifferOutput, options *drivers.ApplyDiffWithDifferOpts) error {
 	ddriver, ok := r.driver.(drivers.DriverWithDiffer)
 	if !ok {
 		return ErrNotSupported
@@ -2802,20 +2806,16 @@ func (r *layerStore) applyDiffFromStagingDirectory(id string, diffOutput *driver
 		}
 		maps.Copy(layer.Flags, options.Flags)
 	}
-	if err = r.saveFor(layer); err != nil {
-		return err
-	}
 
 	if diffOutput.TarSplit != nil {
 		tarSplitFile, err := createTarSplitFile(r, layer.ID)
 		if err != nil {
 			return err
 		}
-		// make sure to check for errors on close and return that one.
+		tarSplitClosed := false
 		defer func() {
-			closeErr := tarSplitFile.Close()
-			if retErr == nil {
-				retErr = closeErr
+			if !tarSplitClosed {
+				tarSplitFile.Close()
 			}
 		}()
 		tarSplitWriter := pools.BufioWriter32KPool.Get(tarSplitFile)
@@ -2841,7 +2841,12 @@ func (r *layerStore) applyDiffFromStagingDirectory(id string, diffOutput *driver
 		if err := tarSplitWriter.Flush(); err != nil {
 			return fmt.Errorf("failed to flush tar-split writer buffer: %w", err)
 		}
+		tarSplitClosed = true
+		if err := tarSplitFile.Close(); err != nil {
+			return err
+		}
 	}
+
 	for k, v := range diffOutput.BigData {
 		if err := r.SetBigData(id, k, bytes.NewReader(v)); err != nil {
 			if err2 := r.deleteWhileHoldingLock(id); err2 != nil {
@@ -2849,6 +2854,10 @@ func (r *layerStore) applyDiffFromStagingDirectory(id string, diffOutput *driver
 			}
 			return err
 		}
+	}
+
+	if err = r.saveFor(layer); err != nil {
+		return err
 	}
 	return err
 }
