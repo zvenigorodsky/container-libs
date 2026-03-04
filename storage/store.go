@@ -25,13 +25,13 @@ import (
 	"github.com/sirupsen/logrus"
 	drivers "go.podman.io/storage/drivers"
 	"go.podman.io/storage/internal/dedup"
+	"go.podman.io/storage/internal/opts"
 	"go.podman.io/storage/internal/tempdir"
 	"go.podman.io/storage/pkg/archive"
 	"go.podman.io/storage/pkg/directory"
 	"go.podman.io/storage/pkg/idtools"
 	"go.podman.io/storage/pkg/ioutils"
 	"go.podman.io/storage/pkg/lockfile"
-	"go.podman.io/storage/pkg/parsers"
 	"go.podman.io/storage/pkg/stringutils"
 	"go.podman.io/storage/pkg/system"
 	"go.podman.io/storage/types"
@@ -3934,17 +3934,12 @@ func GetDefaultMountOptions() ([]string, error) {
 
 // GetMountOptions returns the mountoptions for the specified driver and graphDriverOptions
 func GetMountOptions(driver string, graphDriverOptions []string) ([]string, error) {
-	mountOpts := []string{
-		".mountopt",
-		fmt.Sprintf("%s.mountopt", driver),
-	}
 	for _, option := range graphDriverOptions {
-		key, val, err := parsers.ParseKeyValueOpt(option)
+		optDriver, key, val, err := opts.ParseDriverOption(option)
 		if err != nil {
 			return nil, err
 		}
-		key = strings.ToLower(key)
-		if slices.Contains(mountOpts, key) {
+		if (optDriver == "" || optDriver == driver) && key == "mountopt" {
 			return strings.Split(val, ","), nil
 		}
 	}

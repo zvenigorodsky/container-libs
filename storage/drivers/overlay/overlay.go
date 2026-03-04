@@ -28,6 +28,7 @@ import (
 	"go.podman.io/storage/drivers/overlayutils"
 	"go.podman.io/storage/drivers/quota"
 	"go.podman.io/storage/internal/dedup"
+	"go.podman.io/storage/internal/opts"
 	"go.podman.io/storage/internal/staging_lockfile"
 	"go.podman.io/storage/internal/tempdir"
 	"go.podman.io/storage/pkg/archive"
@@ -38,7 +39,6 @@ import (
 	"go.podman.io/storage/pkg/idmap"
 	"go.podman.io/storage/pkg/idtools"
 	"go.podman.io/storage/pkg/mount"
-	"go.podman.io/storage/pkg/parsers"
 	"go.podman.io/storage/pkg/system"
 	"go.podman.io/storage/pkg/unshare"
 	"golang.org/x/sys/unix"
@@ -467,15 +467,16 @@ func Init(home string, options graphdriver.Options) (graphdriver.Driver, error) 
 func parseOptions(options []string) (*overlayOptions, error) {
 	o := &overlayOptions{}
 	for _, option := range options {
-		key, val, err := parsers.ParseKeyValueOpt(option)
+		driver, key, val, err := opts.ParseDriverOption(option)
 		if err != nil {
 			return nil, err
 		}
-		trimkey := strings.ToLower(key)
-		trimkey = strings.TrimPrefix(trimkey, "overlay.")
-		trimkey = strings.TrimPrefix(trimkey, "overlay2.")
-		trimkey = strings.TrimPrefix(trimkey, ".")
-		switch trimkey {
+		if driver != "" && driver != "overlay" && driver != "overlay2" {
+			// do not parse options meant for another storage driver
+			continue
+		}
+
+		switch key {
 		case "override_kernel_check":
 			logrus.Debugf("overlay: override_kernel_check option was specified, but is no longer necessary")
 		case "mountopt":
@@ -594,7 +595,7 @@ func parseOptions(options []string) (*overlayOptions, error) {
 			m := os.FileMode(mask)
 			o.forceMask = &m
 		default:
-			return nil, fmt.Errorf("overlay: unknown option %s", key)
+			return nil, fmt.Errorf("unknown option %q (%q)", key, option)
 		}
 	}
 	return o, nil
