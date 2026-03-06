@@ -563,6 +563,37 @@ var _ = Describe("Config", func() {
 			Expect(err.Error()).To(ContainSubstring("subnet ip is nil"))
 		})
 
+		DescribeTable("Subnet validation",
+			func(subnets []string, errContains string) {
+				ns := make([]types.Subnet, 0, len(subnets))
+				for _, s := range subnets {
+					sn, _ := types.ParseCIDR(s)
+					ns = append(ns, types.Subnet{Subnet: sn})
+				}
+
+				network := types.Network{Driver: "bridge", Subnets: ns}
+				_, err := libpodNet.NetworkCreate(network, nil)
+				if errContains != "" {
+					Expect(err).To(HaveOccurred())
+					Expect(err.Error()).To(ContainSubstring(errContains))
+					return
+				}
+				Expect(err).ToNot(HaveOccurred())
+			},
+			// Config file defines overlapping subnets:
+			// - 10.1.2.0/23 covers 10.1.2.0-10.1.3.255
+			// - 10.1.3.248/30 covers 10.1.3.248-10.1.3.251 (subset of the /23)
+			Entry("overlapping ipv4 subnets", []string{"10.1.2.0/23", "10.1.3.248/30"}, "overlapping subnets detected"),
+			// Config file defines overlapping subnets:
+			// - fd00:1:2::/48 covers fd00:1:2:0:0:0:0:0 - fd00:1:2:ffff:ffff:ffff:ffff:ffff
+			// - fd00:1:2:3:f8::/124 covers fd00:1:2:3:f8:0:0:0 - fd00:1:2:3:f8:0:0:f (subset of the /48)
+			Entry("overlapping ipv6 subnets", []string{"fd00:1:2::/48", "fd00:1:2:3:f8::/124"}, "overlapping subnets detected"),
+			Entry("duplicate ipv4 subnets", []string{"10.89.0.0/16", "10.89.0.0/16"}, "duplicate subnets detected"),
+			Entry("duplicate ipv6 subnets", []string{"fd11::/64", "fd11::/64"}, "duplicate subnets detected"),
+			Entry("two non-overlapping ipv4 subnets", []string{"10.12.0.0/16", "10.13.0.0/16"}, ""),
+			Entry("two non-overlapping ipv6 subnets", []string{"fd12::/64", "fd13::/64"}, ""),
+		)
+
 		It("create network with name", func() {
 			name := "myname"
 			network := types.Network{
