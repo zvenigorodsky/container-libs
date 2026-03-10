@@ -82,6 +82,7 @@ linters:
       - linters:
           - dupl
           - perfsprint
+          - prealloc
         path: _test\.go
       - linters:
           - contextcheck
