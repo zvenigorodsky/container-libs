@@ -112,24 +112,20 @@ func TestAlgorithmConcurrency(t *testing.T) {
 
 	// Start reader goroutines
 	for i := 0; i < numReaders; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			algorithm := TmpDigestForNewObjects() // Read operation
 			readResults <- algorithm
-		}()
+		})
 	}
 
 	// Start writer goroutines - all writing the same algorithm
 	for i := 0; i < numWriters; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			err := TmpSetDigestForNewObjects(digest.SHA512) // All writers set SHA512
 			if err != nil {
 				errCh <- err
 			}
-		}()
+		})
 	}
 
 	// Wait for all goroutines to complete

@@ -215,7 +215,6 @@ var _ = Describe("run CNI", func() {
 					Expect(res[defNet].DNSServerIPs).To(BeEmpty())
 					Expect(res[defNet].DNSSearchDomains).To(BeEmpty())
 					var wg sync.WaitGroup
-					wg.Add(1)
 					// start a listener in the container ns
 					err = netNSContainer.Do(func(_ ns.NetNS) error {
 						defer GinkgoRecover()
@@ -274,7 +273,6 @@ var _ = Describe("run CNI", func() {
 					for p := 5001; p < 5004; p++ {
 						port := p
 						var wg sync.WaitGroup
-						wg.Add(1)
 						testdata := stringid.GenerateNonCryptoID()
 						// start a listener in the container ns
 						err = netNSContainer.Do(func(_ ns.NetNS) error {
@@ -333,7 +331,6 @@ var _ = Describe("run CNI", func() {
 
 					testdata := stringid.GenerateNonCryptoID()
 					var wg sync.WaitGroup
-					wg.Add(1)
 					// start tcp listener in the container ns
 					err = netNSContainer.Do(func(_ ns.NetNS) error {
 						defer GinkgoRecover()
@@ -1375,9 +1372,8 @@ func runNetListener(wg *sync.WaitGroup, protocol, ip string, port int, expectedD
 		ln, err := net.Listen(protocol, net.JoinHostPort(ip, strconv.Itoa(port)))
 		Expect(err).ToNot(HaveOccurred())
 		// make sure to read in a separate goroutine to not block
-		go func() {
+		wg.Go(func() {
 			defer GinkgoRecover()
-			defer wg.Done()
 			conn, err := ln.Accept()
 			Expect(err).ToNot(HaveOccurred())
 			err = conn.SetDeadline(time.Now().Add(1 * time.Second))
@@ -1387,7 +1383,7 @@ func runNetListener(wg *sync.WaitGroup, protocol, ip string, port int, expectedD
 			Expect(string(data)).To(Equal(expectedData))
 			conn.Close()
 			ln.Close()
-		}()
+		})
 	case "udp":
 		conn, err := net.ListenUDP("udp", &net.UDPAddr{
 			IP:   net.ParseIP(ip),
@@ -1396,16 +1392,15 @@ func runNetListener(wg *sync.WaitGroup, protocol, ip string, port int, expectedD
 		Expect(err).ToNot(HaveOccurred())
 		err = conn.SetDeadline(time.Now().Add(1 * time.Second))
 		Expect(err).ToNot(HaveOccurred())
-		go func() {
+		wg.Go(func() {
 			defer GinkgoRecover()
-			defer wg.Done()
 			data := make([]byte, len(expectedData))
 			i, err := conn.Read(data)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(i).To(Equal(len(expectedData)))
 			Expect(string(data)).To(Equal(expectedData))
 			conn.Close()
-		}()
+		})
 	default:
 		Fail("unsupported protocol")
 	}

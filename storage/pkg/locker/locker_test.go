@@ -99,14 +99,12 @@ func TestLockerConcurrency(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for range 10001 {
-		wg.Add(1)
-		go func() {
+		wg.Go(func() {
 			l.Lock("test")
 			// if there is a concurrency issue, will very likely panic here
 			err := l.Unlock("test")
 			require.NoError(t, err)
-			wg.Done()
-		}()
+		})
 	}
 
 	chDone := make(chan struct{})

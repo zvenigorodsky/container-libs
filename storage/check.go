@@ -292,14 +292,13 @@ func (s *store) Check(options *CheckOptions) (CheckReport, error) {
 					reader := io.TeeReader(diff, counter)
 					var wg sync.WaitGroup
 					var archiveErr error
-					wg.Add(1)
-					go func(layerID string, diffReader io.Reader) {
+					wg.Go(func() {
 						// Read the diff, one item at a time.
-						tr := tar.NewReader(diffReader)
+						tr := tar.NewReader(reader)
 						hdr, err := tr.Next()
 						for err == nil {
 							diffHeadersByLayerMutex.Lock()
-							diffHeadersByLayer[layerID] = append(diffHeadersByLayer[layerID], hdr)
+							diffHeadersByLayer[id] = append(diffHeadersByLayer[id], hdr)
 							diffHeadersByLayerMutex.Unlock()
 							hdr, err = tr.Next()
 						}
@@ -307,16 +306,15 @@ func (s *store) Check(options *CheckOptions) (CheckReport, error) {
 							archiveErr = err
 						}
 						// consume any trailer after the EOF marker
-						if _, err := io.Copy(io.Discard, diffReader); err != nil {
-							err = fmt.Errorf("layer %s: consume any trailer after the EOF marker: %w", layerID, err)
+						if _, err := io.Copy(io.Discard, reader); err != nil {
+							err = fmt.Errorf("layer %s: consume any trailer after the EOF marker: %w", id, err)
 							if isReadWrite {
-								report.Layers[layerID] = append(report.Layers[layerID], err)
+								report.Layers[id] = append(report.Layers[id], err)
 							} else {
-								report.ROLayers[layerID] = append(report.ROLayers[layerID], err)
+								report.ROLayers[id] = append(report.ROLayers[id], err)
 							}
 						}
-						wg.Done()
-					}(id, reader)
+					})
 					wg.Wait()
 					diff.Close()
 					if archiveErr != nil {

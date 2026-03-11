@@ -1613,18 +1613,15 @@ func (c *chunkedDiffer) ApplyDiff(dest string, options *archive.TarOptions, diff
 	}()
 
 	for range copyGoRoutines {
-		wg.Add(1)
 		jobs := copyFileJobs
-
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			for job := range jobs {
 				found, err := c.findAndCopyFile(dirfd, job.metadata, &copyOptions, job.mode)
 				job.err = err
 				job.found = found
 				copyResults[job.njob] = job
 			}
-		}()
+		})
 	}
 
 	filesToWaitFor := 0

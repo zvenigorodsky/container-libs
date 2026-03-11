@@ -36,13 +36,11 @@ func TestAttachLoopbackDeviceRace(t *testing.T) {
 	wg := sync.WaitGroup{}
 
 	for range maxGoroutines {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		wg.Go(func() {
 			for range maxDevicesPerGoroutine {
 				createLoopbackDevice()
 			}
-		}()
+		})
 	}
 	wg.Wait()
 }
