@@ -2,6 +2,7 @@ package chunked
 
 import (
 	archivetar "archive/tar"
+	"cmp"
 	"context"
 	"encoding/base64"
 	"errors"
@@ -14,7 +15,6 @@ import (
 	"path/filepath"
 	"reflect"
 	"slices"
-	"sort"
 	"strings"
 	"sync"
 	"syscall"
@@ -1069,8 +1069,8 @@ func mergeMissingChunks(missingParts []missingPart, target int) []missingPart {
 		}
 		lastOffset = i
 	}
-	sort.Slice(requestGaps, func(i, j int) bool {
-		return requestGaps[i].cost < requestGaps[j].cost
+	slices.SortFunc(requestGaps, func(a, b gap) int {
+		return cmp.Compare(a.cost, b.cost)
 	})
 	toMergeMap := make([]bool, len(missingParts))
 	remainingToMerge := numberSourceChunks - target
