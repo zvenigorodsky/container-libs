@@ -293,7 +293,7 @@ storage_cross_task:
     alias: storage_cross
     name: "Storage: Cross"
     container:
-        image: golang:1.24
+        image: golang:1.25
     modules_cache: *modules_cache
     build_script: |
       cd storage
@@ -304,7 +304,7 @@ storage_gofix_task:
     alias: storage_gofix
     name: "Storage: gofix"
     container:
-        image: golang:1.24
+        image: golang:1.25
     build_script: |
       cd storage
       go fix ./...
@@ -333,6 +333,6 @@ success_task:
         - image_test
         - image_test_skopeo
     container:
-        image: golang:1.24
+        image: golang:1.25
     clone_script: 'mkdir -p "$CIRRUS_WORKING_DIR"'  # Source code not needed
     script: /bin/true
