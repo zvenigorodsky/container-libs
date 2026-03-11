@@ -48,7 +48,7 @@ func TestPutBlobDigestFailure(t *testing.T) {
 			if len(p) > 0 {
 				firstRead = false
 			}
-			for i := 0; i < len(p); i++ {
+			for i := range p {
 				p[i] = 0xAA
 			}
 			return len(p), nil
