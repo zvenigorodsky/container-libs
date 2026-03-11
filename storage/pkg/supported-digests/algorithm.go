@@ -14,6 +14,7 @@ package supporteddigests
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"sync"
 
@@ -108,12 +109,7 @@ func IsSupportedDigestAlgorithm(algorithm digest.Algorithm) bool {
 
 	// Check against the list of supported algorithms
 	supportedAlgorithms := GetSupportedDigestAlgorithms()
-	for _, supported := range supportedAlgorithms {
-		if algorithm == supported {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(supportedAlgorithms, algorithm)
 }
 
 // GetSupportedDigestAlgorithms returns a list of all supported digest algorithms.
