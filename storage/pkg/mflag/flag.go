@@ -81,13 +81,13 @@
 package mflag
 
 import (
+	"cmp"
 	"errors"
 	"fmt"
 	"io"
 	"os"
 	"runtime"
 	"slices"
-	"sort"
 	"strconv"
 	"strings"
 	"text/tabwriter"
@@ -329,22 +329,9 @@ type Flag struct {
 	DefValue string   // default value (as text); for usage message
 }
 
-type flagSlice []string
-
-func (p flagSlice) Len() int { return len(p) }
-func (p flagSlice) Less(i, j int) bool {
-	pi, pj := strings.TrimPrefix(p[i], "-"), strings.TrimPrefix(p[j], "-")
-	lpi, lpj := strings.ToLower(pi), strings.ToLower(pj)
-	if lpi != lpj {
-		return lpi < lpj
-	}
-	return pi < pj
-}
-func (p flagSlice) Swap(i, j int) { p[i], p[j] = p[j], p[i] }
-
 // sortFlags returns the flags as a slice in lexicographical sorted order.
 func sortFlags(flags map[string]*Flag) []*Flag {
-	var list flagSlice
+	var list []string
 
 	// The sorted list is based on the first name, when flag map might use the other names.
 	nameMap := make(map[string]string)
@@ -361,7 +348,14 @@ func sortFlags(flags map[string]*Flag) []*Flag {
 			list = append(list, fName)
 		}
 	}
-	sort.Sort(list)
+	slices.SortFunc(list, func(a, b string) int {
+		a, b = strings.TrimPrefix(a, "-"), strings.TrimPrefix(b, "-")
+		la, lb := strings.ToLower(a), strings.ToLower(b)
+		if la != lb {
+			return cmp.Compare(la, lb)
+		}
+		return cmp.Compare(a, b)
+	})
 	result := make([]*Flag, len(list))
 	for i, name := range list {
 		result[i] = flags[nameMap[name]]
