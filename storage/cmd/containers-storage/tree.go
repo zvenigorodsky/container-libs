@@ -59,7 +59,7 @@ func printSubTree(root string, nodes []treeNode, indent int, continued []int) []
 		for _, column := range continued {
 			istring[column] = treeVertical
 		}
-		subc := continued[:]
+		subc := continued
 		header := treeJustThis
 		noteHeader := " "
 		if n < len(children)-1 {
