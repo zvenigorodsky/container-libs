@@ -376,7 +376,7 @@ func addFIPSMounts(mounts *[]rspec.Mount, containerRunDir, mountPoint, mountLabe
 		// be in FIPS mode
 		ctrDirOnHost := filepath.Join(containerRunDir, subscriptionsDir)
 		if err := fileutils.Exists(ctrDirOnHost); errors.Is(err, os.ErrNotExist) {
-			if err = idtools.MkdirAllAs(ctrDirOnHost, 0o755, uid, gid); err != nil { //nolint
+			if err = idtools.MkdirAllAndChown(ctrDirOnHost, 0o755, idtools.IDPair{UID: uid, GID: gid}); err != nil {
 				return err
 			}
 			if err = label.Relabel(ctrDirOnHost, mountLabel, false); err != nil {
