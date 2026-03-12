@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/require"
 	"go.podman.io/storage/pkg/mount"
 )
 
@@ -25,12 +26,10 @@ func TestEnsureRemoveAllWithDir(t *testing.T) {
 }
 
 func TestEnsureRemoveAllWithFile(t *testing.T) {
-	tmp, err := os.CreateTemp("", "test-ensure-removeall-with-dir")
-	if err != nil {
-		t.Fatal(err)
-	}
-	tmp.Close()
-	if err := EnsureRemoveAll(tmp.Name()); err != nil {
+	tmp := filepath.Join(t.TempDir(), "test-ensure-removeall-with-file")
+	err := os.WriteFile(tmp, []byte{}, 0o644)
+	require.NoError(t, err)
+	if err := EnsureRemoveAll(tmp); err != nil {
 		t.Fatal(err)
 	}
 }

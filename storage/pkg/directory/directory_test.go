@@ -40,14 +40,8 @@ func TestUsageEmptyFile(t *testing.T) {
 func TestUsageNonemptyFile(t *testing.T) {
 	dir := t.TempDir()
 
-	var file *os.File
-	var err error
-	if file, err = os.CreateTemp(dir, "file"); err != nil {
-		t.Fatalf("failed to create file: %s", err)
-	}
-
-	d := []byte{97, 98, 99, 100, 101}
-	_, err = file.Write(d)
+	file := filepath.Join(dir, "file")
+	err := os.WriteFile(file, []byte{97, 98, 99, 100, 101}, 0o644)
 	require.NoError(t, err)
 
 	usage, _ := Usage(dir)
@@ -89,13 +83,8 @@ func TestUsageFileAndNestedDirectoryEmpty(t *testing.T) {
 		t.Fatalf("failed to create nested directory: %s", err)
 	}
 
-	var file *os.File
-	if file, err = os.CreateTemp(dir, "file"); err != nil {
-		t.Fatalf("failed to create file: %s", err)
-	}
-
-	d := []byte{100, 111, 99, 107, 101, 114}
-	_, err = file.Write(d)
+	file := filepath.Join(dir, "file")
+	err = os.WriteFile(file, []byte{100, 111, 99, 107, 101, 114}, 0o644)
 	require.NoError(t, err)
 
 	usage, _ := Usage(dir)
@@ -115,22 +104,12 @@ func TestUsageFileAndNestedDirectoryNonempty(t *testing.T) {
 		t.Fatalf("failed to create nested directory: %s", err)
 	}
 
-	var file *os.File
-	if file, err = os.CreateTemp(dir, "file"); err != nil {
-		t.Fatalf("failed to create file: %s", err)
-	}
-
-	data := []byte{100, 111, 99, 107, 101, 114}
-	_, err = file.Write(data)
+	file := filepath.Join(dir, "file")
+	err = os.WriteFile(file, []byte{100, 111, 99, 107, 101, 114}, 0o644)
 	require.NoError(t, err)
 
-	var nestedFile *os.File
-	if nestedFile, err = os.CreateTemp(dirNested, "file"); err != nil {
-		t.Fatalf("failed to create file in nested directory: %s", err)
-	}
-
-	nestedData := []byte{100, 111, 99, 107, 101, 114}
-	_, err = nestedFile.Write(nestedData)
+	nestedFile := filepath.Join(dirNested, "file")
+	err = os.WriteFile(nestedFile, []byte{100, 111, 99, 107, 101, 114}, 0o644)
 	require.NoError(t, err)
 
 	usage, _ := Usage(dir)

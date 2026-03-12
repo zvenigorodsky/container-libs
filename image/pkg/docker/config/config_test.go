@@ -534,11 +534,7 @@ func TestGetCredentialsInteroperability(t *testing.T) {
 
 func TestGetAllCredentials(t *testing.T) {
 	// Create a temporary authentication file.
-	tmpFile, err := os.CreateTemp("", "auth.json.")
-	require.NoError(t, err)
-	authFilePath := tmpFile.Name()
-	defer tmpFile.Close()
-	defer os.Remove(authFilePath)
+	authFilePath := filepath.Join(t.TempDir(), "auth.json")
 	// override PATH for executing credHelper
 	path, err := os.Getwd()
 	require.NoError(t, err)
@@ -734,13 +730,10 @@ func TestSetCredentials(t *testing.T) {
 			"docker.io/library",
 		},
 	} {
-		tmpFile, err := os.CreateTemp("", "auth.json.set")
+		tmpFile := filepath.Join(t.TempDir(), "auth.json.set")
+		err := os.WriteFile(tmpFile, []byte("{}"), 0o644)
 		require.NoError(t, err)
-		defer os.RemoveAll(tmpFile.Name())
-
-		_, err = tmpFile.WriteString("{}")
-		require.NoError(t, err)
-		sys := &types.SystemContext{AuthFilePath: tmpFile.Name()}
+		sys := &types.SystemContext{AuthFilePath: tmpFile}
 
 		writtenCredentials := map[string]int{}
 		for i, input := range tc {
@@ -755,7 +748,7 @@ func TestSetCredentials(t *testing.T) {
 		}
 
 		// Read the resulting file and verify it contains the expected keys
-		auth, err := newAuthPathDefault(tmpFile.Name()).parse()
+		auth, err := newAuthPathDefault(tmpFile).parse()
 		require.NoError(t, err)
 		assert.Len(t, auth.AuthConfigs, len(writtenCredentials))
 		// auth.AuthConfigs and writtenCredentials are both maps, i.e. their keys are unique;
@@ -856,14 +849,11 @@ func TestRemoveAuthentication(t *testing.T) {
 		content, err := json.Marshal(&tc.config)
 		require.NoError(t, err)
 
-		tmpFile, err := os.CreateTemp("", "auth.json")
-		require.NoError(t, err)
-		defer os.RemoveAll(tmpFile.Name())
-
-		_, err = tmpFile.Write(content)
+		tmpFile := filepath.Join(t.TempDir(), "auth.json")
+		err = os.WriteFile(tmpFile, content, 0o644)
 		require.NoError(t, err)
 
-		sys := &types.SystemContext{AuthFilePath: tmpFile.Name()}
+		sys := &types.SystemContext{AuthFilePath: tmpFile}
 
 		for _, input := range tc.inputs {
 			err := RemoveAuthentication(sys, input)
@@ -874,7 +864,7 @@ func TestRemoveAuthentication(t *testing.T) {
 			}
 		}
 
-		auth, err := newAuthPathDefault(tmpFile.Name()).parse()
+		auth, err := newAuthPathDefault(tmpFile).parse()
 		require.NoError(t, err)
 
 		tc.assert(auth)
@@ -1055,19 +1045,18 @@ func TestSetGetCredentials(t *testing.T) {
 		},
 	} {
 		// Create a new empty SystemContext referring an empty auth.json
-		tmpFile, err := os.CreateTemp("", "auth.json-")
-		require.NoError(t, err)
-		defer os.RemoveAll(tmpFile.Name())
+		tmpFile := filepath.Join(t.TempDir(), "auth.json")
 
 		sys := &types.SystemContext{}
 		if tc.useLegacyFormat {
-			sys.LegacyFormatAuthFilePath = tmpFile.Name()
-			_, err = fmt.Fprintf(tmpFile, `{"%s":{"auth":"dXNlcm5hbWU6cGFzc3dvcmQ="}}`, tc.set)
+			sys.LegacyFormatAuthFilePath = tmpFile
+			err := os.WriteFile(tmpFile, fmt.Appendf(nil, `{"%s":{"auth":"dXNlcm5hbWU6cGFzc3dvcmQ="}}`, tc.set), 0o644)
+			require.NoError(t, err)
 		} else {
-			sys.AuthFilePath = tmpFile.Name()
-			_, err = fmt.Fprintf(tmpFile, `{"auths":{"%s":{"auth":"dXNlcm5hbWU6cGFzc3dvcmQ="}}}`, tc.set)
+			sys.AuthFilePath = tmpFile
+			err := os.WriteFile(tmpFile, fmt.Appendf(nil, `{"auths":{"%s":{"auth":"dXNlcm5hbWU6cGFzc3dvcmQ="}}}`, tc.set), 0o644)
+			require.NoError(t, err)
 		}
-		require.NoError(t, err)
 
 		// Try to authenticate against them
 		auth, err := getCredentialsWithHomeDir(sys, tc.get, tmpDir)

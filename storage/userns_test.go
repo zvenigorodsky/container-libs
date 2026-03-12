@@ -243,11 +243,7 @@ nogroup:x:65533:`,
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tmpDir, err := os.MkdirTemp("", "containermount")
-			if err != nil {
-				t.Fatalf("Failed to create temp dir: %v", err)
-			}
-			defer os.RemoveAll(tmpDir)
+			tmpDir := t.TempDir()
 
 			passwdFile := filepath.Join(tmpDir, "passwd")
 			if err := os.WriteFile(passwdFile, []byte(tt.passwdContent), 0o644); err != nil {

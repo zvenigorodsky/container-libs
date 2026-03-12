@@ -164,13 +164,12 @@ func refToTempOCIArchive(t *testing.T, tarEntryTimestamp *time.Time) (ref types.
 `
 	err := os.WriteFile(filepath.Join(tmpDir, "index.json"), []byte(m), 0o644)
 	require.NoError(t, err)
-	tarFile, err := os.CreateTemp("", "oci-transport-test.tar")
+	tarFile := filepath.Join(t.TempDir(), "oci-transport-test.tar")
+	err = tarDirectory(tmpDir, tarFile, tarEntryTimestamp)
 	require.NoError(t, err)
-	err = tarDirectory(tmpDir, tarFile.Name(), tarEntryTimestamp)
+	ref, err = NewReference(tarFile, "")
 	require.NoError(t, err)
-	ref, err = NewReference(tarFile.Name(), "")
-	require.NoError(t, err)
-	return ref, tarFile.Name()
+	return ref, tarFile
 }
 
 func TestReferenceTransport(t *testing.T) {
@@ -256,8 +255,7 @@ func TestReferenceNewImage(t *testing.T) {
 }
 
 func TestReferenceNewImageSource(t *testing.T) {
-	ref, tmpTarFile := refToTempOCIArchive(t, nil)
-	defer os.RemoveAll(tmpTarFile)
+	ref, _ := refToTempOCIArchive(t, nil)
 	src, err := ref.NewImageSource(context.Background(), nil)
 	assert.NoError(t, err)
 	defer src.Close()
@@ -268,7 +266,6 @@ func TestTimestampEntriesPassedThrough(t *testing.T) {
 	targetTime := time.Now().Add(time.Hour).Truncate(time.Second)
 
 	_, tmpTarFile := refToTempOCIArchive(t, &targetTime)
-	defer os.RemoveAll(tmpTarFile)
 
 	f, err := os.Open(tmpTarFile)
 	assert.NoError(t, err)

@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"sync"
 	"sync/atomic"
@@ -168,37 +169,30 @@ type namedLockFile struct {
 	name string
 }
 
-func getNamedLockFile(ro bool) (*namedLockFile, error) {
+func getNamedLockFile(t *testing.T, ro bool) *namedLockFile {
 	var l *LockFile
-	tf, err := os.CreateTemp("", "lockfile")
-	if err != nil {
-		return nil, err
-	}
-	name := tf.Name()
-	tf.Close()
+	name := filepath.Join(t.TempDir(), "lockfile")
+	err := os.WriteFile(name, []byte{}, 0o644)
+	require.NoError(t, err)
 	if ro {
 		l, err = GetROLockFile(name)
 	} else {
 		l, err = GetLockFile(name)
 	}
-	if err != nil {
-		return nil, err
-	}
-	return &namedLockFile{LockFile: l, name: name}, nil
+	require.NoError(t, err)
+	return &namedLockFile{LockFile: l, name: name}
 }
 
-func getTempLockfile() (*namedLockFile, error) {
-	return getNamedLockFile(false)
+func getTempLockfile(t *testing.T) *namedLockFile {
+	return getNamedLockFile(t, false)
 }
 
-func getTempROLockfile() (*namedLockFile, error) {
-	return getNamedLockFile(true)
+func getTempROLockfile(t *testing.T) *namedLockFile {
+	return getNamedLockFile(t, true)
 }
 
 func TestLockfileName(t *testing.T) {
-	l, err := getTempLockfile()
-	require.Nil(t, err, "error getting temporary lock file")
-	defer os.Remove(l.name)
+	l := getTempLockfile(t)
 
 	assert.NotEmpty(t, l.name, "lockfile name should be recorded correctly")
 
@@ -225,11 +219,9 @@ func TestTryWriteLockFile(t *testing.T) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	l, err := getTempLockfile()
-	require.Nil(t, err, "error getting temporary lock file")
-	defer os.Remove(l.name)
+	l := getTempLockfile(t)
 
-	err = l.TryLock()
+	err := l.TryLock()
 	assert.Nil(t, err)
 
 	l.AssertLocked()
@@ -249,11 +241,9 @@ func TestTryReadLockFile(t *testing.T) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 
-	l, err := getTempLockfile()
-	require.Nil(t, err, "error getting temporary lock file")
-	defer os.Remove(l.name)
+	l := getTempLockfile(t)
 
-	err = l.TryRLock()
+	err := l.TryRLock()
 	assert.Nil(t, err)
 
 	l.AssertLocked()
@@ -278,9 +268,7 @@ func TestTryReadLockFile(t *testing.T) {
 }
 
 func TestTryLockState(t *testing.T) {
-	l, err := getTempLockfile()
-	require.NoError(t, err, "creating lock")
-	defer os.Remove(l.name)
+	l := getTempLockfile(t)
 
 	// Take a write lock somewhere.
 	cmd, wc, rc, err := subLock(l)
@@ -327,9 +315,7 @@ func TestTryLockState(t *testing.T) {
 }
 
 func TestLockfileRead(t *testing.T) {
-	l, err := getTempLockfile()
-	require.Nil(t, err, "error getting temporary lock file")
-	defer os.Remove(l.name)
+	l := getTempLockfile(t)
 
 	l.RLock()
 	l.AssertLocked()
@@ -338,9 +324,7 @@ func TestLockfileRead(t *testing.T) {
 }
 
 func TestROLockfileRead(t *testing.T) {
-	l, err := getTempROLockfile()
-	require.Nil(t, err, "error getting temporary lock file")
-	defer os.Remove(l.name)
+	l := getTempROLockfile(t)
 
 	l.RLock()
 	l.AssertLocked()
@@ -349,9 +333,7 @@ func TestROLockfileRead(t *testing.T) {
 }
 
 func TestLockfileWrite(t *testing.T) {
-	l, err := getTempLockfile()
-	require.Nil(t, err, "error getting temporary lock file")
-	defer os.Remove(l.name)
+	l := getTempLockfile(t)
 
 	l.Lock()
 	l.AssertLocked()
@@ -360,9 +342,7 @@ func TestLockfileWrite(t *testing.T) {
 }
 
 func TestROLockfileWrite(t *testing.T) {
-	l, err := getTempROLockfile()
-	require.Nil(t, err, "error getting temporary lock file")
-	defer os.Remove(l.name)
+	l := getTempROLockfile(t)
 
 	defer func() {
 		assert.NotNil(t, recover(), "Should have panicked trying to take a write lock using a read lock")
@@ -374,9 +354,7 @@ func TestROLockfileWrite(t *testing.T) {
 }
 
 func TestLockfileTouch(t *testing.T) {
-	l, err := getTempLockfile()
-	require.Nil(t, err, "error getting temporary lock file")
-	defer os.Remove(l.name)
+	l := getTempLockfile(t)
 
 	l.Lock()
 	m, err := l.Modified()
@@ -413,9 +391,7 @@ func TestLockfileTouch(t *testing.T) {
 }
 
 func TestLockfileRecordWrite(t *testing.T) {
-	l, err := getTempLockfile()
-	require.NoError(t, err, "error getting temporary lock file")
-	defer os.Remove(l.name)
+	l := getTempLockfile(t)
 
 	l.Lock()
 	state, err := l.GetLastWrite()
@@ -462,9 +438,7 @@ func TestLockfileRecordWrite(t *testing.T) {
 }
 
 func TestLockfileWriteConcurrent(t *testing.T) {
-	l, err := getTempLockfile()
-	require.Nil(t, err, "error getting temporary lock file")
-	defer os.Remove(l.name)
+	l := getTempLockfile(t)
 	var wg sync.WaitGroup
 	var highestMutex sync.Mutex
 	var counter, highest int64
@@ -494,9 +468,7 @@ func TestLockfileWriteConcurrent(t *testing.T) {
 }
 
 func TestLockfileReadConcurrent(t *testing.T) {
-	l, err := getTempLockfile()
-	require.Nil(t, err, "error getting temporary lock file")
-	defer os.Remove(l.name)
+	l := getTempLockfile(t)
 
 	// the test below is inspired by the stdlib's rwmutex tests
 	numReaders := 1000
@@ -529,9 +501,7 @@ func TestLockfileReadConcurrent(t *testing.T) {
 }
 
 func TestLockfileMixedConcurrent(t *testing.T) {
-	l, err := getTempLockfile()
-	require.Nil(t, err, "error getting temporary lock file")
-	defer os.Remove(l.name)
+	l := getTempLockfile(t)
 
 	counter := int32(0)
 	diff := int32(10000)
@@ -583,9 +553,7 @@ func TestLockfileMixedConcurrent(t *testing.T) {
 }
 
 func TestLockfileMultiprocessRead(t *testing.T) {
-	l, err := getTempLockfile()
-	require.Nil(t, err, "error getting temporary lock file")
-	defer os.Remove(l.name)
+	l := getTempLockfile(t)
 	var wg sync.WaitGroup
 	var rcounter, rhighest int64
 	var highestMutex sync.Mutex
@@ -631,9 +599,7 @@ func TestLockfileMultiprocessRead(t *testing.T) {
 }
 
 func TestLockfileMultiprocessWrite(t *testing.T) {
-	l, err := getTempLockfile()
-	require.Nil(t, err, "error getting temporary lock file")
-	defer os.Remove(l.name)
+	l := getTempLockfile(t)
 	var wg sync.WaitGroup
 	var wcounter, whighest int64
 	var highestMutex sync.Mutex
@@ -679,9 +645,7 @@ func TestLockfileMultiprocessWrite(t *testing.T) {
 }
 
 func TestLockfileMultiprocessMixed(t *testing.T) {
-	l, err := getTempLockfile()
-	require.Nil(t, err, "error getting temporary lock file")
-	defer os.Remove(l.name)
+	l := getTempLockfile(t)
 	var wg sync.WaitGroup
 	var rcounter, wcounter, rhighest, whighest int64
 	var rhighestMutex, whighestMutex sync.Mutex
@@ -702,6 +666,7 @@ func TestLockfileMultiprocessMixed(t *testing.T) {
 		var cmd *exec.Cmd
 		var stdin io.WriteCloser
 		var stdout io.ReadCloser
+		var err error
 		if writer(i) {
 			cmd, stdin, stdout, err = subLock(l)
 			require.Nil(t, err, "error starting subprocess %d to take a write lock", i+1)
@@ -770,8 +735,7 @@ func TestLockfileMultiprocessMixed(t *testing.T) {
 }
 
 func TestLockfileMultiprocessModified(t *testing.T) {
-	lock, err := getTempLockfile()
-	require.NoError(t, err, "creating lock")
+	lock := getTempLockfile(t)
 
 	// Lock hasn't been touched yet - initial state.
 	lock.Lock()
@@ -831,8 +795,7 @@ func TestLockfileMultiprocessModified(t *testing.T) {
 }
 
 func TestLockfileMultiprocessModifiedSince(t *testing.T) {
-	lock, err := getTempLockfile()
-	require.NoError(t, err, "creating lock")
+	lock := getTempLockfile(t)
 
 	// Lock hasn't been touched yet - initial state.
 	lock.Lock()

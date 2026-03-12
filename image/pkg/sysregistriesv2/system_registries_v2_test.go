@@ -505,12 +505,8 @@ func TestMixingV1andV2(t *testing.T) {
 }
 
 func TestConfigCache(t *testing.T) {
-	configFile, err := os.CreateTemp("", "sysregistriesv2-test")
-	require.NoError(t, err)
-	defer os.Remove(configFile.Name())
-	defer configFile.Close()
-
-	err = os.WriteFile(configFile.Name(), []byte(`
+	configFile := filepath.Join(t.TempDir(), "sysregistriesv2-test")
+	err := os.WriteFile(configFile, []byte(`
 [[registry]]
 location = "registry.com"
 
@@ -536,7 +532,7 @@ location = "untrusted.registry.com"
 insecure = true`), 0o600)
 	require.NoError(t, err)
 
-	ctx := &types.SystemContext{SystemRegistriesConfPath: configFile.Name()}
+	ctx := &types.SystemContext{SystemRegistriesConfPath: configFile}
 
 	InvalidateCache()
 	registries, err := GetRegistries(ctx)
@@ -545,7 +541,7 @@ insecure = true`), 0o600)
 
 	// empty the config, but use the same SystemContext to show that the
 	// previously specified registries are in the cache
-	err = os.WriteFile(configFile.Name(), []byte{}, 0o600)
+	err = os.WriteFile(configFile, []byte{}, 0o600)
 	require.NoError(t, err)
 	registries, err = GetRegistries(ctx)
 	assert.Nil(t, err)
