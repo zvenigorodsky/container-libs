@@ -2,12 +2,13 @@ package archive
 
 import (
 	"archive/tar"
+	"cmp"
 	"fmt"
 	"io"
 	"os"
 	"path"
 	"runtime"
-	"sort"
+	"slices"
 	"testing"
 
 	"go.podman.io/storage/pkg/idtools"
@@ -56,7 +57,7 @@ func TestHardLinkOrder(t *testing.T) {
 	}
 
 	// sort
-	sort.Sort(changesByPath(changes))
+	slices.SortFunc(changes, compareChangesByPath)
 
 	// ExportChanges
 	ar, err := ExportChanges(dest, changes, nil, nil)
@@ -69,7 +70,9 @@ func TestHardLinkOrder(t *testing.T) {
 	}
 
 	// reverse sort
-	sort.Sort(sort.Reverse(changesByPath(changes)))
+	slices.SortFunc(changes, func(a, b Change) int {
+		return -compareChangesByPath(a, b)
+	})
 	// ExportChanges
 	arRev, err := ExportChanges(dest, changes, nil, nil)
 	if err != nil {
@@ -81,8 +84,8 @@ func TestHardLinkOrder(t *testing.T) {
 	}
 
 	// line up the two sets
-	sort.Sort(tarHeaders(hdrs))
-	sort.Sort(tarHeaders(hdrsRev))
+	slices.SortFunc(hdrs, compareTarHeaders)
+	slices.SortFunc(hdrsRev, compareTarHeaders)
 
 	// compare Size and LinkName
 	for i := range hdrs {
@@ -101,11 +104,9 @@ func TestHardLinkOrder(t *testing.T) {
 	}
 }
 
-type tarHeaders []tar.Header
-
-func (th tarHeaders) Len() int           { return len(th) }
-func (th tarHeaders) Swap(i, j int)      { th[j], th[i] = th[i], th[j] }
-func (th tarHeaders) Less(i, j int) bool { return th[i].Name < th[j].Name }
+func compareTarHeaders(a, b tar.Header) int {
+	return cmp.Compare(a.Name, b.Name)
+}
 
 func walkHeaders(r io.Reader) ([]tar.Header, error) {
 	t := tar.NewReader(r)

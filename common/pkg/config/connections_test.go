@@ -84,10 +84,8 @@ var _ = Describe("Connections conf", func() {
 		// less than it is racy.
 		count := 50
 		wg := sync.WaitGroup{}
-		wg.Add(count)
 		for range count {
-			go func() {
-				defer wg.Done()
+			wg.Go(func() {
 				err := EditConnectionConfig(func(cfg *ConnectionsFile) error {
 					if cfg.Connection.Default == "" {
 						cfg.Connection.Default = "1"
@@ -103,7 +101,7 @@ var _ = Describe("Connections conf", func() {
 					return nil
 				})
 				gomega.Expect(err).ToNot(gomega.HaveOccurred())
-			}()
+			})
 		}
 		wg.Wait()
 		path, err := connectionsConfigFile()

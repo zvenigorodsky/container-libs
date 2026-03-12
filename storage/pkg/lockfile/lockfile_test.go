@@ -443,8 +443,7 @@ func TestLockfileWriteConcurrent(t *testing.T) {
 	var highestMutex sync.Mutex
 	var counter, highest int64
 	for range 8000 {
-		wg.Add(1)
-		go func() {
+		wg.Go(func() {
 			l.Lock()
 			workingCounter := atomic.AddInt64(&counter, 1)
 			assert.True(t, workingCounter >= 0, "counter should never be less than zero")
@@ -460,8 +459,7 @@ func TestLockfileWriteConcurrent(t *testing.T) {
 			highestMutex.Unlock()
 			atomic.AddInt64(&counter, -1)
 			l.Unlock()
-			wg.Done()
-		}()
+		})
 	}
 	wg.Wait()
 	assert.True(t, highest == 1, "counter should never have gone above 1, got to %d", highest)
@@ -570,8 +568,7 @@ func TestLockfileMultiprocessRead(t *testing.T) {
 		subs[i].stdout = stdout
 	}
 	for i := range subs {
-		wg.Add(1)
-		go func(i int) {
+		wg.Go(func() {
 			_, err := io.Copy(io.Discard, subs[i].stdout)
 			require.NoError(t, err)
 			if testing.Verbose() {
@@ -591,8 +588,7 @@ func TestLockfileMultiprocessRead(t *testing.T) {
 			subs[i].stdin.Close()
 			err = subs[i].cmd.Wait()
 			require.NoError(t, err)
-			wg.Done()
-		}(i)
+		})
 	}
 	wg.Wait()
 	assert.True(t, rhighest > 1, "expected to have multiple reader locks at least once, only had %d", rhighest)
@@ -616,8 +612,7 @@ func TestLockfileMultiprocessWrite(t *testing.T) {
 		subs[i].stdout = stdout
 	}
 	for i := range subs {
-		wg.Add(1)
-		go func(i int) {
+		wg.Go(func() {
 			_, err := io.Copy(io.Discard, subs[i].stdout)
 			require.NoError(t, err)
 			if testing.Verbose() {
@@ -637,8 +632,7 @@ func TestLockfileMultiprocessWrite(t *testing.T) {
 			subs[i].stdin.Close()
 			err = subs[i].cmd.Wait()
 			require.NoError(t, err)
-			wg.Done()
-		}(i)
+		})
 	}
 	wg.Wait()
 	assert.True(t, whighest == 1, "expected to have no more than one writer lock active at a time, had %d", whighest)
@@ -679,8 +673,7 @@ func TestLockfileMultiprocessMixed(t *testing.T) {
 		subs[i].stdout = stdout
 	}
 	for i := range subs {
-		wg.Add(1)
-		go func(i int) {
+		wg.Go(func() {
 			// wait for the child to acquire whatever lock it wants
 			_, err := io.Copy(io.Discard, subs[i].stdout)
 			require.NoError(t, err)
@@ -726,8 +719,7 @@ func TestLockfileMultiprocessMixed(t *testing.T) {
 			subs[i].stdin.Close()
 			err = subs[i].cmd.Wait()
 			require.NoError(t, err)
-			wg.Done()
-		}(i)
+		})
 	}
 	wg.Wait()
 	assert.True(t, rhighest > 1, "expected to have more than one reader lock active at a time at least once, only had %d", rhighest)

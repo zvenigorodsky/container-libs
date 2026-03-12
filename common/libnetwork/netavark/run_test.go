@@ -195,7 +195,6 @@ var _ = Describe("run netavark", func() {
 			expected := stringid.GenerateNonCryptoID()
 			// now check ip connectivity
 			err = netNSContainer.Do(func(_ ns.NetNS) error {
-				wg.Add(1)
 				runNetListener(wg, "tcp", "0.0.0.0", 5000, expected)
 				return nil
 			})
@@ -545,7 +544,6 @@ var _ = Describe("run netavark", func() {
 				Expect(res[defNet].DNSServerIPs).To(BeEmpty())
 				Expect(res[defNet].DNSSearchDomains).To(BeEmpty())
 				var wg sync.WaitGroup
-				wg.Add(1)
 				// start a listener in the container ns
 				err = netNSContainer.Do(func(_ ns.NetNS) error {
 					defer GinkgoRecover()
@@ -604,7 +602,6 @@ var _ = Describe("run netavark", func() {
 				for p := 5001; p < 5004; p++ {
 					port := p
 					var wg sync.WaitGroup
-					wg.Add(1)
 					testdata := stringid.GenerateNonCryptoID()
 					// start a listener in the container ns
 					err = netNSContainer.Do(func(_ ns.NetNS) error {
@@ -799,9 +796,8 @@ func runNetListener(wg *sync.WaitGroup, protocol, ip string, port int, expectedD
 		ln, err := net.Listen(protocol, net.JoinHostPort(ip, strconv.Itoa(port)))
 		Expect(err).ToNot(HaveOccurred())
 		// make sure to read in a separate goroutine to not block
-		go func() {
+		wg.Go(func() {
 			defer GinkgoRecover()
-			defer wg.Done()
 			defer ln.Close()
 			conn, err := ln.Accept()
 			Expect(err).ToNot(HaveOccurred())
@@ -811,7 +807,7 @@ func runNetListener(wg *sync.WaitGroup, protocol, ip string, port int, expectedD
 			data, err := io.ReadAll(conn)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(string(data)).To(Equal(expectedData))
-		}()
+		})
 	case "udp":
 		conn, err := net.ListenUDP("udp", &net.UDPAddr{
 			IP:   net.ParseIP(ip),
@@ -820,16 +816,15 @@ func runNetListener(wg *sync.WaitGroup, protocol, ip string, port int, expectedD
 		Expect(err).ToNot(HaveOccurred())
 		err = conn.SetDeadline(time.Now().Add(1 * time.Second))
 		Expect(err).ToNot(HaveOccurred())
-		go func() {
+		wg.Go(func() {
 			defer GinkgoRecover()
-			defer wg.Done()
 			defer conn.Close()
 			data := make([]byte, len(expectedData))
 			i, err := conn.Read(data)
 			Expect(err).ToNot(HaveOccurred())
 			Expect(i).To(Equal(len(expectedData)))
 			Expect(string(data)).To(Equal(expectedData))
-		}()
+		})
 	default:
 		Fail("unsupported protocol")
 	}

@@ -306,15 +306,13 @@ func TestTagAndUntagParallel(t *testing.T) {
 	names = append(names, origNames...)
 
 	// Test tag in parallel, the extra go routine is critical for the test do not remove that.
-	wg.Add(tagCount)
 	for i := range tagCount {
 		name := fmt.Sprintf("localhost/tag-%d:latest", i)
 		names = append(names, name)
-		go func(name string) {
-			defer wg.Done()
+		wg.Go(func() {
 			err := image.Tag(name)
 			require.NoError(t, err, "parallel tag should have succeeded")
-		}(name)
+		})
 	}
 
 	// wait for all routines to finish
@@ -326,15 +324,13 @@ func TestTagAndUntagParallel(t *testing.T) {
 	require.ElementsMatch(t, names, newImg.Names(), "tag image names should contain same elements")
 
 	// Test untag in parallel
-	wg.Add(tagCount)
 	for i := range tagCount {
 		name := fmt.Sprintf("localhost/tag-%d:latest", i)
 		names = append(names, name)
-		go func(name string) {
-			defer wg.Done()
+		wg.Go(func() {
 			err := image.Untag(name)
 			require.NoError(t, err, "parallel untag should have succeeded")
-		}(name)
+		})
 	}
 	// wait for all routines to finish
 	wg.Wait()

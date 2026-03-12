@@ -51,7 +51,7 @@ func TestTempDirAddMultipleFiles(t *testing.T) {
 
 	for i := 0; i < 3; i++ {
 		testFile := filepath.Join(tempDir, fmt.Sprintf("testfile%d.txt", i))
-		err = os.WriteFile(testFile, []byte(fmt.Sprintf("content %d", i)), 0o644)
+		err = os.WriteFile(testFile, fmt.Appendf(nil, "content %d", i), 0o644)
 		require.NoError(t, err)
 
 		err = td.StageDeletion(testFile)

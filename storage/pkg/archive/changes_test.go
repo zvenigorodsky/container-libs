@@ -5,7 +5,7 @@ import (
 	"os/exec"
 	"path"
 	"runtime"
-	"sort"
+	"slices"
 	"testing"
 	"time"
 
@@ -339,7 +339,7 @@ func TestChangesDirsMutated(t *testing.T) {
 	changes, err := ChangesDirs(dst, &idtools.IDMappings{}, src, &idtools.IDMappings{})
 	require.NoError(t, err)
 
-	sort.Sort(changesByPath(changes))
+	slices.SortFunc(changes, compareChangesByPath)
 
 	expectedChanges := []Change{
 		{"/dir1", ChangeDelete},
@@ -468,8 +468,8 @@ func TestChangesSize(t *testing.T) {
 }
 
 func checkChanges(t *testing.T, expectedChanges, changes []Change) {
-	sort.Sort(changesByPath(expectedChanges))
-	sort.Sort(changesByPath(changes))
+	slices.SortFunc(expectedChanges, compareChangesByPath)
+	slices.SortFunc(changes, compareChangesByPath)
 	for i := range max(len(changes), len(expectedChanges)) {
 		if i >= len(expectedChanges) {
 			t.Fatalf("unexpected change %s\n", changes[i].String())
