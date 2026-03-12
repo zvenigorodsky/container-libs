@@ -293,12 +293,9 @@ func TestNew(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			baseHostFile := tt.baseFileName
 			if !tt.noWriteBaseFile {
-				f, err := os.CreateTemp(t.TempDir(), "basehosts")
-				assert.NoErrorf(t, err, "failed to create base host file: %v", err)
-				defer f.Close()
-				baseHostFile = f.Name()
-				_, err = f.WriteString(tt.baseFileContent)
-				assert.NoError(t, err, "failed to write base host file: %v", err)
+				baseHostFile = filepath.Join(t.TempDir(), "basehosts")
+				err := os.WriteFile(baseHostFile, []byte(tt.baseFileContent), 0o644)
+				assert.NoError(t, err, "failed to create base host file: %v", err)
 			}
 
 			targetFile := filepath.Join(t.TempDir(), "target")
@@ -364,12 +361,9 @@ func TestAdd(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f, err := os.CreateTemp(t.TempDir(), "hosts")
-			assert.NoErrorf(t, err, "failed to create base host file: %v", err)
-			defer f.Close()
-			hostFile := f.Name()
-			_, err = f.WriteString(tt.baseFileContent)
-			assert.NoError(t, err, "failed to write base host file: %v", err)
+			hostFile := filepath.Join(t.TempDir(), "hosts")
+			err := os.WriteFile(hostFile, []byte(tt.baseFileContent), 0o644)
+			assert.NoError(t, err, "failed to create base host file: %v", err)
 
 			var st unix.Stat_t
 			err = unix.Stat(hostFile, &st)
@@ -459,12 +453,9 @@ func TestAddIfExists(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f, err := os.CreateTemp(t.TempDir(), "hosts")
-			assert.NoErrorf(t, err, "failed to create base host file: %v", err)
-			defer f.Close()
-			hostFile := f.Name()
-			_, err = f.WriteString(tt.baseFileContent)
-			assert.NoError(t, err, "failed to write base host file: %v", err)
+			hostFile := filepath.Join(t.TempDir(), "hosts")
+			err := os.WriteFile(hostFile, []byte(tt.baseFileContent), 0o644)
+			assert.NoError(t, err, "failed to create base host file: %v", err)
 
 			var st unix.Stat_t
 			err = unix.Stat(hostFile, &st)
@@ -521,12 +512,9 @@ func TestRemove(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f, err := os.CreateTemp(t.TempDir(), "hosts")
-			assert.NoErrorf(t, err, "failed to create base host file: %v", err)
-			defer f.Close()
-			hostFile := f.Name()
-			_, err = f.WriteString(tt.baseFileContent)
-			assert.NoError(t, err, "failed to write base host file: %v", err)
+			hostFile := filepath.Join(t.TempDir(), "hosts")
+			err := os.WriteFile(hostFile, []byte(tt.baseFileContent), 0o644)
+			assert.NoError(t, err, "failed to create base host file: %v", err)
 
 			var st unix.Stat_t
 			err = unix.Stat(hostFile, &st)

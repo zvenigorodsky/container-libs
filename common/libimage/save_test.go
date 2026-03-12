@@ -5,6 +5,7 @@ package libimage
 import (
 	"context"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -28,10 +29,8 @@ func TestSave(t *testing.T) {
 	// reload the images for each test.
 	saveOptions := &SaveOptions{}
 	saveOptions.Writer = os.Stdout
-	imageCache, err := os.CreateTemp(t.TempDir(), "saveimagecache")
-	require.NoError(t, err)
-	imageCache.Close()
-	err = runtime.Save(ctx, []string{"alpine", "busybox"}, "docker-archive", imageCache.Name(), saveOptions)
+	imageCache := filepath.Join(t.TempDir(), "saveimagecache")
+	err = runtime.Save(ctx, []string{"alpine", "busybox"}, "docker-archive", imageCache, saveOptions)
 	require.NoError(t, err)
 
 	loadOptions := &LoadOptions{}
@@ -68,7 +67,7 @@ func TestSave(t *testing.T) {
 		// First clean up all images and load the cache.
 		_, rmErrors := runtime.RemoveImages(ctx, nil, nil)
 		require.Nil(t, rmErrors)
-		_, err = runtime.Load(ctx, imageCache.Name(), loadOptions)
+		_, err = runtime.Load(ctx, imageCache, loadOptions)
 		require.NoError(t, err)
 
 		tmp := t.TempDir()

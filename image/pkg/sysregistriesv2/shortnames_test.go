@@ -2,6 +2,7 @@ package sysregistriesv2
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -105,14 +106,14 @@ func TestValidateShortName(t *testing.T) {
 }
 
 func TestResolveShortNameAlias(t *testing.T) {
-	tmp, err := os.CreateTemp("", "aliases.conf")
+	tmp := filepath.Join(t.TempDir(), "aliases.conf")
+	err := os.WriteFile(tmp, []byte{}, 0o644)
 	require.NoError(t, err)
-	defer os.Remove(tmp.Name())
 
 	sys := &types.SystemContext{
 		SystemRegistriesConfPath:    "testdata/aliases.conf",
 		SystemRegistriesConfDirPath: "testdata/this-does-not-exist",
-		UserShortNameAliasConfPath:  tmp.Name(),
+		UserShortNameAliasConfPath:  tmp,
 	}
 
 	InvalidateCache()
@@ -160,14 +161,14 @@ func TestResolveShortNameAlias(t *testing.T) {
 }
 
 func TestAliasesWithDropInConfigs(t *testing.T) {
-	tmp, err := os.CreateTemp("", "aliases.conf")
+	tmp := filepath.Join(t.TempDir(), "aliases.conf")
+	err := os.WriteFile(tmp, []byte{}, 0o644)
 	require.NoError(t, err)
-	defer os.Remove(tmp.Name())
 
 	sys := &types.SystemContext{
 		SystemRegistriesConfPath:    "testdata/aliases.conf",
 		SystemRegistriesConfDirPath: "testdata/registries.conf.d",
-		UserShortNameAliasConfPath:  tmp.Name(),
+		UserShortNameAliasConfPath:  tmp,
 	}
 
 	InvalidateCache()
@@ -207,17 +208,17 @@ func TestAliasesWithDropInConfigs(t *testing.T) {
 		{
 			"added1",
 			"aliases.conf/added1", // from AddShortNameAlias
-			tmp.Name(),
+			tmp,
 		},
 		{
 			"added2",
 			"aliases.conf/added2", // from AddShortNameAlias
-			tmp.Name(),
+			tmp,
 		},
 		{
 			"added3",
 			"aliases.conf/added3", // from config2, overridden by AddShortNameAlias
-			tmp.Name(),
+			tmp,
 		},
 	}
 
@@ -272,14 +273,14 @@ func TestAliasesWithDropInConfigs(t *testing.T) {
 }
 
 func TestInvalidAliases(t *testing.T) {
-	tmp, err := os.CreateTemp("", "aliases.conf")
+	tmp := filepath.Join(t.TempDir(), "aliases.conf")
+	err := os.WriteFile(tmp, []byte{}, 0o644)
 	require.NoError(t, err)
-	defer os.Remove(tmp.Name())
 
 	sys := &types.SystemContext{
 		SystemRegistriesConfPath:    "testdata/invalid-aliases.conf",
 		SystemRegistriesConfDirPath: "testdata/this-does-not-exist",
-		UserShortNameAliasConfPath:  tmp.Name(),
+		UserShortNameAliasConfPath:  tmp,
 	}
 
 	InvalidateCache()

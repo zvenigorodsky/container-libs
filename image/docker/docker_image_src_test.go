@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
@@ -50,11 +51,8 @@ location = "with-mirror.example.com"
 [[registry.mirror]]
 location = "@REGISTRY@/with-mirror"
 `, "@REGISTRY@", registry)
-	registriesConf, err := os.CreateTemp("", "docker-image-src")
-	require.NoError(t, err)
-	defer registriesConf.Close()
-	defer os.Remove(registriesConf.Name())
-	err = os.WriteFile(registriesConf.Name(), []byte(mirrorConfiguration), 0o600)
+	registriesConf := filepath.Join(t.TempDir(), "docker-image-src")
+	err = os.WriteFile(registriesConf, []byte(mirrorConfiguration), 0o600)
 	require.NoError(t, err)
 
 	for _, c := range []struct{ input, physical string }{
@@ -67,7 +65,7 @@ location = "@REGISTRY@/with-mirror"
 		src, err := ref.NewImageSource(context.Background(), &types.SystemContext{
 			RegistriesDirPath:           "/this/does/not/exist",
 			DockerPerHostCertDirPath:    "/this/does/not/exist",
-			SystemRegistriesConfPath:    registriesConf.Name(),
+			SystemRegistriesConfPath:    registriesConf,
 			DockerInsecureSkipTLSVerify: types.OptionalBoolTrue,
 		})
 		require.NoError(t, err, c.input)

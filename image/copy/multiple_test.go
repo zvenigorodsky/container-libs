@@ -155,16 +155,14 @@ type simplerInstanceCopy struct {
 func convertInstanceCopyToSimplerInstanceCopy(copies []instanceCopy) []simplerInstanceCopy {
 	res := []simplerInstanceCopy{}
 	for _, instance := range copies {
-		compression := ""
 		platform := ""
-		compression = instance.cloneCompressionVariant.Algorithm.Name()
 		if instance.clonePlatform != nil {
 			platform = instance.clonePlatform.Architecture + "-" + instance.clonePlatform.OS + "-" + instance.clonePlatform.Variant
 		}
 		res = append(res, simplerInstanceCopy{
 			op:                      instance.op,
 			sourceDigest:            instance.sourceDigest,
-			cloneCompressionVariant: compression,
+			cloneCompressionVariant: instance.cloneCompressionVariant.Algorithm.Name(),
 			clonePlatform:           platform,
 			cloneAnnotations:        instance.cloneAnnotations,
 		})

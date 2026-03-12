@@ -2,6 +2,7 @@ package shortnames
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -94,20 +95,20 @@ func TestSplitUserInput(t *testing.T) {
 }
 
 func TestResolve(t *testing.T) {
-	tmp, err := os.CreateTemp("", "aliases.conf")
+	tmp := filepath.Join(t.TempDir(), "aliases.conf")
+	err := os.WriteFile(tmp, []byte{}, 0o644)
 	require.NoError(t, err)
-	defer os.Remove(tmp.Name())
 
 	sys := &types.SystemContext{
 		SystemRegistriesConfPath:    "testdata/aliases.conf",
 		SystemRegistriesConfDirPath: "testdata/this-does-not-exist",
-		UserShortNameAliasConfPath:  tmp.Name(),
+		UserShortNameAliasConfPath:  tmp,
 	}
 
 	sysResolveToDockerHub := &types.SystemContext{
 		SystemRegistriesConfPath:                                  "testdata/aliases.conf",
 		SystemRegistriesConfDirPath:                               "testdata/this-does-not-exist",
-		UserShortNameAliasConfPath:                                tmp.Name(),
+		UserShortNameAliasConfPath:                                tmp,
 		PodmanOnlyShortNamesIgnoreRegistriesConfAndForceDockerHub: true,
 	}
 
@@ -260,14 +261,14 @@ func removeAlias(t *testing.T, sys *types.SystemContext, name string, mustFail b
 }
 
 func TestResolveWithDropInConfigs(t *testing.T) {
-	tmp, err := os.CreateTemp("", "aliases.conf")
+	tmp := filepath.Join(t.TempDir(), "aliases.conf")
+	err := os.WriteFile(tmp, []byte{}, 0o644)
 	require.NoError(t, err)
-	defer os.Remove(tmp.Name())
 
 	sys := &types.SystemContext{
 		SystemRegistriesConfPath:    "testdata/aliases.conf",
 		SystemRegistriesConfDirPath: "testdata/registries.conf.d",
-		UserShortNameAliasConfPath:  tmp.Name(),
+		UserShortNameAliasConfPath:  tmp,
 	}
 
 	_, err = sysregistriesv2.TryUpdatingCache(sys)
@@ -393,9 +394,9 @@ func TestResolveWithDropInConfigs(t *testing.T) {
 }
 
 func TestResolveWithVaryingShortNameModes(t *testing.T) {
-	tmp, err := os.CreateTemp("", "aliases.conf")
+	tmp := filepath.Join(t.TempDir(), "aliases.conf")
+	err := os.WriteFile(tmp, []byte{}, 0o644)
 	require.NoError(t, err)
-	defer os.Remove(tmp.Name())
 
 	tests := []struct {
 		confPath   string
@@ -437,7 +438,7 @@ func TestResolveWithVaryingShortNameModes(t *testing.T) {
 	for _, test := range tests {
 		sys := &types.SystemContext{
 			SystemRegistriesConfDirPath: "testdata/this-does-not-exist",
-			UserShortNameAliasConfPath:  tmp.Name(),
+			UserShortNameAliasConfPath:  tmp,
 			// From test
 			SystemRegistriesConfPath: test.confPath,
 			ShortNameMode:            &test.mode,
@@ -458,14 +459,14 @@ func TestResolveWithVaryingShortNameModes(t *testing.T) {
 }
 
 func TestResolveAndRecord(t *testing.T) {
-	tmp, err := os.CreateTemp("", "aliases.conf")
+	tmp := filepath.Join(t.TempDir(), "aliases.conf")
+	err := os.WriteFile(tmp, []byte{}, 0o644)
 	require.NoError(t, err)
-	defer os.Remove(tmp.Name())
 
 	sys := &types.SystemContext{
 		SystemRegistriesConfPath:    "testdata/two-reg.conf",
 		SystemRegistriesConfDirPath: "testdata/this-does-not-exist",
-		UserShortNameAliasConfPath:  tmp.Name(),
+		UserShortNameAliasConfPath:  tmp,
 	}
 
 	_, err = sysregistriesv2.TryUpdatingCache(sys)
@@ -521,19 +522,19 @@ func TestResolveAndRecord(t *testing.T) {
 }
 
 func TestResolveLocally(t *testing.T) {
-	tmp, err := os.CreateTemp("", "aliases.conf")
+	tmp := filepath.Join(t.TempDir(), "aliases.conf")
+	err := os.WriteFile(tmp, []byte{}, 0o644)
 	require.NoError(t, err)
-	defer os.Remove(tmp.Name())
 
 	sys := &types.SystemContext{
 		SystemRegistriesConfPath:    "testdata/two-reg.conf",
 		SystemRegistriesConfDirPath: "testdata/this-does-not-exist",
-		UserShortNameAliasConfPath:  tmp.Name(),
+		UserShortNameAliasConfPath:  tmp,
 	}
 	sysResolveToDockerHub := &types.SystemContext{
 		SystemRegistriesConfPath:                                  "testdata/two-reg.conf",
 		SystemRegistriesConfDirPath:                               "testdata/this-does-not-exist",
-		UserShortNameAliasConfPath:                                tmp.Name(),
+		UserShortNameAliasConfPath:                                tmp,
 		PodmanOnlyShortNamesIgnoreRegistriesConfAndForceDockerHub: true,
 	}
 

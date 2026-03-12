@@ -71,41 +71,32 @@ func testNewReference(t *testing.T, fn func(string) (types.ImageReference, error
 }
 
 // refToTempFile creates a temporary file and returns a reference to it.
-// The caller should
-//
-//	defer os.Remove(tmpFile)
-func refToTempFile(t *testing.T) (ref types.ImageReference, tmpDir string) {
-	f, err := os.CreateTemp("", "sif-transport-test")
+func refToTempFile(t *testing.T) (types.ImageReference, string) {
+	tmpFile := filepath.Join(t.TempDir(), "sif-transport-test")
+	err := os.WriteFile(tmpFile, []byte{}, 0o600)
 	require.NoError(t, err)
-	tmpFile := f.Name()
-	err = f.Close()
-	require.NoError(t, err)
-	ref, err = NewReference(tmpFile)
+	ref, err := NewReference(tmpFile)
 	require.NoError(t, err)
 	return ref, tmpFile
 }
 
 func TestReferenceTransport(t *testing.T) {
-	ref, tmpFile := refToTempFile(t)
-	defer os.Remove(tmpFile)
+	ref, _ := refToTempFile(t)
 	assert.Equal(t, Transport, ref.Transport())
 }
 
 func TestReferenceStringWithinTransport(t *testing.T) {
 	ref, tmpFile := refToTempFile(t)
-	defer os.Remove(tmpFile)
 	assert.Equal(t, tmpFile, ref.StringWithinTransport())
 }
 
 func TestReferenceDockerReference(t *testing.T) {
-	ref, tmpFile := refToTempFile(t)
-	defer os.Remove(tmpFile)
+	ref, _ := refToTempFile(t)
 	assert.Nil(t, ref.DockerReference())
 }
 
 func TestReferencePolicyConfigurationIdentity(t *testing.T) {
 	ref, tmpFile := refToTempFile(t)
-	defer os.Remove(tmpFile)
 
 	assert.Equal(t, tmpFile, ref.PolicyConfigurationIdentity())
 	// A non-canonical path.  Test just one, the various other cases are
@@ -117,7 +108,6 @@ func TestReferencePolicyConfigurationIdentity(t *testing.T) {
 
 func TestReferencePolicyConfigurationNamespaces(t *testing.T) {
 	ref, tmpFile := refToTempFile(t)
-	defer os.Remove(tmpFile)
 	// We don't really know enough to make a full equality test here.
 	ns := ref.PolicyConfigurationNamespaces()
 	require.NotNil(t, ns)
@@ -143,8 +133,7 @@ func TestReferencePolicyConfigurationNamespaces(t *testing.T) {
 }
 
 func TestReferenceNewImage(t *testing.T) {
-	ref, tmpFile := refToTempFile(t)
-	defer os.Remove(tmpFile)
+	ref, _ := refToTempFile(t)
 	// A pretty pointless smoke test for now;
 	// we don't want to require every developer of c/image to have fakeroot etc. around.
 	_, err := ref.NewImage(context.Background(), nil)
@@ -152,8 +141,7 @@ func TestReferenceNewImage(t *testing.T) {
 }
 
 func TestReferenceNewImageSource(t *testing.T) {
-	ref, tmpFile := refToTempFile(t)
-	defer os.Remove(tmpFile)
+	ref, _ := refToTempFile(t)
 	// A pretty pointless smoke test for now;
 	// we don't want to require every developer of c/image to have fakeroot etc. around.
 	_, err := ref.NewImageSource(context.Background(), nil)
@@ -161,15 +149,13 @@ func TestReferenceNewImageSource(t *testing.T) {
 }
 
 func TestReferenceNewImageDestination(t *testing.T) {
-	ref, tmpFile := refToTempFile(t)
-	defer os.Remove(tmpFile)
+	ref, _ := refToTempFile(t)
 	_, err := ref.NewImageDestination(context.Background(), nil)
 	assert.Error(t, err)
 }
 
 func TestReferenceDeleteImage(t *testing.T) {
-	ref, tmpFile := refToTempFile(t)
-	defer os.Remove(tmpFile)
+	ref, _ := refToTempFile(t)
 	err := ref.DeleteImage(context.Background(), nil)
 	assert.Error(t, err)
 }

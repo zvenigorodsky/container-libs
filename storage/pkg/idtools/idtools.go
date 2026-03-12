@@ -47,16 +47,18 @@ const (
 // MkdirAllAs creates a directory (include any along the path) and then modifies
 // ownership to the requested uid/gid.  If the directory already exists, this
 // function will still change ownership to the requested uid/gid pair.
+//
 // Deprecated: Use MkdirAllAndChown
 func MkdirAllAs(path string, mode os.FileMode, ownerUID, ownerGID int) error {
-	return mkdirAs(path, mode, ownerUID, ownerGID, true, true)
+	return MkdirAllAndChown(path, mode, IDPair{UID: ownerUID, GID: ownerGID})
 }
 
 // MkdirAs creates a directory and then modifies ownership to the requested uid/gid.
 // If the directory already exists, this function still changes ownership
+//
 // Deprecated: Use MkdirAndChown with a IDPair
 func MkdirAs(path string, mode os.FileMode, ownerUID, ownerGID int) error {
-	return mkdirAs(path, mode, ownerUID, ownerGID, false, true)
+	return MkdirAndChown(path, mode, IDPair{UID: ownerUID, GID: ownerGID})
 }
 
 // MkdirAllAndChown creates a directory (include any along the path) and then modifies
