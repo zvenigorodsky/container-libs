@@ -227,7 +227,7 @@ func TestReferencePolicyConfigurationNamespaces(t *testing.T) {
 	for _, c := range validReferenceTestCases {
 		ref, err := ParseReference(c.input)
 		require.NoError(t, err, c.input)
-		assert.Empty(t, "", ref.PolicyConfigurationNamespaces(), c.input)
+		assert.Empty(t, ref.PolicyConfigurationNamespaces(), c.input)
 	}
 }
 
