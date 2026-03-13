@@ -107,7 +107,7 @@ require (
 	github.com/proglottis/gpgme v0.1.6 // indirect
 	github.com/secure-systems-lab/go-securesystemslib v0.10.0 // indirect
 	github.com/sergi/go-diff v1.4.0 // indirect
-	github.com/sigstore/fulcio v1.8.1 // indirect
+	github.com/sigstore/fulcio v1.8.5 // indirect
 	github.com/sigstore/protobuf-specs v0.5.0 // indirect
 	github.com/sigstore/sigstore v1.10.4 // indirect
 	github.com/smallstep/pkcs7 v0.1.1 // indirect
