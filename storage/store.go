@@ -861,14 +861,6 @@ func GetStore(options types.StoreOptions) (Store, error) {
 			return nil, err
 		}
 	}
-	if err := os.MkdirAll(filepath.Join(options.GraphRoot, options.GraphDriverName), 0o700); err != nil {
-		return nil, err
-	}
-	if options.ImageStore != "" {
-		if err := os.MkdirAll(filepath.Join(options.ImageStore, options.GraphDriverName), 0o700); err != nil {
-			return nil, err
-		}
-	}
 
 	graphLock, err := lockfile.GetLockFile(filepath.Join(options.GraphRoot, "storage.lock"))
 	if err != nil {
@@ -977,6 +969,16 @@ func (s *store) load() error {
 	}(); err != nil {
 		return err
 	}
+
+	if err := os.MkdirAll(filepath.Join(s.graphRoot, s.graphDriverName), 0o700); err != nil {
+		return err
+	}
+	if s.imageStoreDir != "" {
+		if err := os.MkdirAll(filepath.Join(s.imageStoreDir, s.graphDriverName), 0o700); err != nil {
+			return err
+		}
+	}
+
 	driverPrefix := s.graphDriverName + "-"
 
 	imgStoreRoot := s.imageStoreDir
