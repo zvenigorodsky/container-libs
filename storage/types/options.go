@@ -161,9 +161,8 @@ func LoadStoreOptions(opts LoadOptions) (StoreOptions, error) {
 	if config.Storage.Driver != "" {
 		storeOptions.GraphDriverName = config.Storage.Driver
 	}
-	if os.Getenv("STORAGE_DRIVER") != "" {
-		config.Storage.Driver = os.Getenv("STORAGE_DRIVER")
-		storeOptions.GraphDriverName = config.Storage.Driver
+	if val := os.Getenv("STORAGE_DRIVER"); val != "" {
+		storeOptions.GraphDriverName = val
 	}
 	if storeOptions.GraphDriverName == overlay2 {
 		logrus.Warnf("Switching default driver from overlay2 to the equivalent overlay driver")
