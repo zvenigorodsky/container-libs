@@ -244,6 +244,9 @@ func LoadStoreOptions(opts LoadOptions) (StoreOptions, error) {
 	}
 
 	if config.Storage.GraphRoot != "" {
+		if config.Storage.RootlessStoragePath != "" {
+			logrus.Warn("Both rootless_storage_path and graphroot are set, using graphroot setting only, rootless_storage_path is deprecated and should be removed form the config")
+		}
 		graphRoot, err := expandEnvPath(config.Storage.GraphRoot, rootlessUID)
 		if err != nil {
 			return storeOptions, err
