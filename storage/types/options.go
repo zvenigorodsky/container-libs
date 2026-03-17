@@ -258,7 +258,7 @@ func LoadStoreOptions(opts LoadOptions) (StoreOptions, error) {
 	}
 
 	if storeOptions.ImageStore != "" && storeOptions.ImageStore == storeOptions.GraphRoot {
-		return storeOptions, fmt.Errorf("imagestore %s must either be not set or be a different than graphroot", storeOptions.ImageStore)
+		return storeOptions, fmt.Errorf("imagestore %s must either be not set or be different than graphroot", storeOptions.ImageStore)
 	}
 
 	return storeOptions, nil
