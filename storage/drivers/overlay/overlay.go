@@ -28,7 +28,7 @@ import (
 	"go.podman.io/storage/drivers/overlayutils"
 	"go.podman.io/storage/drivers/quota"
 	"go.podman.io/storage/internal/dedup"
-	"go.podman.io/storage/internal/opts"
+	"go.podman.io/storage/internal/driver"
 	"go.podman.io/storage/internal/staging_lockfile"
 	"go.podman.io/storage/internal/tempdir"
 	"go.podman.io/storage/pkg/archive"
@@ -467,7 +467,7 @@ func Init(home string, options graphdriver.Options) (graphdriver.Driver, error) 
 func parseOptions(options []string) (*overlayOptions, error) {
 	o := &overlayOptions{}
 	for _, option := range options {
-		driver, key, val, err := opts.ParseDriverOption(option)
+		driver, key, val, err := driver.ParseDriverOption(option)
 		if err != nil {
 			return nil, err
 		}

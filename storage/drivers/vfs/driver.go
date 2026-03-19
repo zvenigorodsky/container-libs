@@ -15,7 +15,7 @@ import (
 	"github.com/vbatts/tar-split/tar/storage"
 	graphdriver "go.podman.io/storage/drivers"
 	"go.podman.io/storage/internal/dedup"
-	"go.podman.io/storage/internal/opts"
+	"go.podman.io/storage/internal/driver"
 	"go.podman.io/storage/internal/tempdir"
 	"go.podman.io/storage/pkg/archive"
 	"go.podman.io/storage/pkg/directory"
@@ -46,7 +46,7 @@ func Init(home string, options graphdriver.Options) (graphdriver.Driver, error) 
 		return nil, err
 	}
 	for _, option := range options.DriverOptions {
-		driver, key, val, err := opts.ParseDriverOption(option)
+		driver, key, val, err := driver.ParseDriverOption(option)
 		if err != nil {
 			return nil, err
 		}
