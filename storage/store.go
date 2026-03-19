@@ -25,7 +25,7 @@ import (
 	"github.com/sirupsen/logrus"
 	drivers "go.podman.io/storage/drivers"
 	"go.podman.io/storage/internal/dedup"
-	"go.podman.io/storage/internal/opts"
+	"go.podman.io/storage/internal/driver"
 	"go.podman.io/storage/internal/tempdir"
 	"go.podman.io/storage/pkg/archive"
 	"go.podman.io/storage/pkg/directory"
@@ -3942,13 +3942,13 @@ func GetDefaultMountOptions() ([]string, error) {
 }
 
 // GetMountOptions returns the mountoptions for the specified driver and graphDriverOptions
-func GetMountOptions(driver string, graphDriverOptions []string) ([]string, error) {
+func GetMountOptions(usedDriver string, graphDriverOptions []string) ([]string, error) {
 	for _, option := range graphDriverOptions {
-		optDriver, key, val, err := opts.ParseDriverOption(option)
+		optDriver, key, val, err := driver.ParseDriverOption(option)
 		if err != nil {
 			return nil, err
 		}
-		if (optDriver == "" || optDriver == driver) && key == "mountopt" {
+		if (optDriver == "" || optDriver == usedDriver) && key == "mountopt" {
 			return strings.Split(val, ","), nil
 		}
 	}

@@ -33,7 +33,7 @@ import (
 	"github.com/opencontainers/selinux/go-selinux/label"
 	"github.com/sirupsen/logrus"
 	graphdriver "go.podman.io/storage/drivers"
-	"go.podman.io/storage/internal/opts"
+	"go.podman.io/storage/internal/driver"
 	"go.podman.io/storage/internal/tempdir"
 	"go.podman.io/storage/pkg/directory"
 	"go.podman.io/storage/pkg/fileutils"
@@ -97,7 +97,7 @@ func parseOptions(opt []string) (btrfsOptions, bool, error) {
 	var options btrfsOptions
 	userDiskQuota := false
 	for _, option := range opt {
-		driver, key, val, err := opts.ParseDriverOption(option)
+		driver, key, val, err := driver.ParseDriverOption(option)
 		if err != nil {
 			return options, userDiskQuota, err
 		}
