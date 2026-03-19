@@ -128,7 +128,7 @@ type OptionsConfig struct {
 func GetGraphDriverOptions(options OptionsConfig) []string {
 	var doptions []string
 	if options.Btrfs.MinSpace != "" {
-		return append(doptions, fmt.Sprintf("btrfs.min_space=%s", options.Btrfs.MinSpace))
+		doptions = append(doptions, fmt.Sprintf("btrfs.min_space=%s", options.Btrfs.MinSpace))
 	}
 	if options.Btrfs.Size != "" {
 		doptions = append(doptions, fmt.Sprintf("btrfs.size=%s", options.Btrfs.Size))
