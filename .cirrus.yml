@@ -36,7 +36,7 @@ env:
     # package is not available in earlier releases; once we update to a future
     # Fedora release (or if the package is backported), switch back from Rawhide
     # to the latest Fedora release.
-    IMAGE_SUFFIX: "c20260310t170224z-f43f42d14"
+    IMAGE_SUFFIX: "c20260319t182308z-f43f42d14"
     RAWHIDE_CACHE_IMAGE_NAME: "rawhide-${IMAGE_SUFFIX}"
 
     FEDORA_CACHE_IMAGE_NAME: "fedora-${IMAGE_SUFFIX}"
@@ -281,7 +281,7 @@ common_testing_task:
     name: "Common: Test"
     modules_cache: *modules_cache
     env:
-        NETAVARK_BINARY: "/usr/libexec/podman/netavark"
+        NETAVARK_BINARY: "/usr/local/libexec/podman/netavark"
     test_script: |
       cd common
       make build
