@@ -103,6 +103,14 @@ test-unit: netavark-testplugin
 	go test --tags seccomp,$(BUILDTAGS) -v ./...
 	go test --tags remote,$(BUILDTAGS) -v ./pkg/config
 
+.PHONY: bin/json-proxy-test-server
+bin/json-proxy-test-server:
+	$(GO_BUILD) -o $@ ./cmd/json-proxy-test-server/
+
+.PHONY: test-integration
+test-integration: bin/json-proxy-test-server
+	JSON_PROXY_TEST_BINARY=$(CURDIR)/bin/json-proxy-test-server go test --tags $(BUILDTAGS) -v ./pkg/json-proxy/
+
 clean: ## Clean artifacts
 	$(MAKE) -C docs clean
 	find . -name \*~ -delete
