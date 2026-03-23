@@ -26,64 +26,86 @@ func TestPrepareInstanceOpsForInstanceCopy(t *testing.T) {
 	list, err := internalManifest.ListFromBlob(validManifest, internalManifest.GuessMIMEType(validManifest))
 	require.NoError(t, err)
 
-	// Test CopyAllImages
 	sourceInstances := []digest.Digest{
 		digest.Digest("sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"),
 		digest.Digest("sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
 		digest.Digest("sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"),
 	}
 
-	instancesToCopy, copyCount, err := prepareInstanceOps(list, sourceInstances, &Options{}, "")
-	require.NoError(t, err)
-	assert.Equal(t, len(sourceInstances), copyCount)
-	compare := []instanceOp{}
-
-	for _, instance := range sourceInstances {
-		compare = append(compare, instanceOp{
-			op:           instanceOpCopy,
-			sourceDigest: instance, copyForceCompressionFormat: false,
-		})
+	for _, c := range []struct {
+		instanceDigests   []digest.Digest
+		options           Options
+		expectedError     string
+		expectedOps       []instanceOp
+		expectedCopyCount int
+	}{
+		{ // CopyAllImages
+			instanceDigests: sourceInstances,
+			options:         Options{},
+			expectedOps: []instanceOp{
+				{op: instanceOpCopy, sourceDigest: "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", copyForceCompressionFormat: false},
+				{op: instanceOpCopy, sourceDigest: "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", copyForceCompressionFormat: false},
+				{op: instanceOpCopy, sourceDigest: "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc", copyForceCompressionFormat: false},
+			},
+			expectedCopyCount: 3,
+		},
+		{ // CopySpecificImages where selected instance is sourceInstances[1]
+			instanceDigests: sourceInstances,
+			options:         Options{Instances: []digest.Digest{sourceInstances[1]}, ImageListSelection: CopySpecificImages},
+			expectedOps: []instanceOp{
+				{op: instanceOpCopy, sourceDigest: "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", copyForceCompressionFormat: false},
+			},
+			expectedCopyCount: 1,
+		},
+		{ // CopySpecificImages with StripSparseManifestList where selected instance is sourceInstances[1]
+			instanceDigests: sourceInstances,
+			options:         Options{Instances: []digest.Digest{sourceInstances[1]}, ImageListSelection: CopySpecificImages, SparseManifestListAction: StripSparseManifestList},
+			expectedOps: []instanceOp{ // Should have 1 copy operation followed by 2 delete operations (for indices 0 and 2)
+				{op: instanceOpCopy, sourceDigest: "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"},
+				// Delete from highest to lowest
+				{op: instanceOpDelete, deleteIndex: 2},
+				{op: instanceOpDelete, deleteIndex: 0},
+			},
+			expectedCopyCount: 1,
+		},
+		{ // Copying an empty image
+			instanceDigests:   []digest.Digest{},
+			options:           Options{},
+			expectedOps:       []instanceOp{},
+			expectedCopyCount: 0,
+		},
+		{ // Copying an empty image, with stripping, still OK
+			instanceDigests:   []digest.Digest{},
+			options:           Options{SparseManifestListAction: StripSparseManifestList},
+			expectedOps:       []instanceOp{},
+			expectedCopyCount: 0,
+		},
+		{ // A sparse copy that does not copy any instance from a non-empty image
+			instanceDigests:   sourceInstances,
+			options:           Options{Instances: []digest.Digest{}, ImageListSelection: CopySpecificImages},
+			expectedOps:       []instanceOp{},
+			expectedCopyCount: 0,
+		},
+		{ // Stripping a non-empty image to empty
+			instanceDigests: sourceInstances,
+			options:         Options{Instances: []digest.Digest{}, ImageListSelection: CopySpecificImages, SparseManifestListAction: StripSparseManifestList},
+			expectedError:   "would create an empty image",
+		},
+		{
+			instanceDigests: sourceInstances,
+			options:         Options{Instances: []digest.Digest{sourceInstances[1]}, ImageListSelection: CopySpecificImages, ForceCompressionFormat: true},
+			expectedError:   "cannot use ForceCompressionFormat with undefined default compression format",
+		},
+	} {
+		ops, copyCount, err := prepareInstanceOps(list, c.instanceDigests, &c.options, "")
+		if c.expectedError != "" {
+			assert.ErrorContains(t, err, c.expectedError)
+		} else {
+			require.NoError(t, err)
+			assert.Equal(t, c.expectedOps, ops)
+			assert.Equal(t, c.expectedCopyCount, copyCount)
+		}
 	}
-	assert.Equal(t, instancesToCopy, compare)
-
-	// Test CopySpecificImages where selected instance is sourceInstances[1]
-	instancesToCopy, copyCount, err = prepareInstanceOps(list, sourceInstances, &Options{Instances: []digest.Digest{sourceInstances[1]}, ImageListSelection: CopySpecificImages}, "")
-	require.NoError(t, err)
-	compare = []instanceOp{{
-		op:           instanceOpCopy,
-		sourceDigest: sourceInstances[1],
-	}}
-	assert.Equal(t, len(compare), copyCount)
-	assert.Equal(t, instancesToCopy, compare)
-
-	// Test CopySpecificImages with StripSparseManifestList where selected instance is sourceInstances[1]
-	instancesToCopy, copyCount, err = prepareInstanceOps(list, sourceInstances, &Options{
-		Instances:                []digest.Digest{sourceInstances[1]},
-		ImageListSelection:       CopySpecificImages,
-		SparseManifestListAction: StripSparseManifestList,
-	}, "")
-	require.NoError(t, err)
-	// Should have 1 copy operation followed by 2 delete operations (for indices 0 and 2)
-	expected := []instanceOp{
-		{
-			op:           instanceOpCopy,
-			sourceDigest: sourceInstances[1],
-		},
-		{
-			op:          instanceOpDelete,
-			deleteIndex: 2, // Delete from highest to lowest
-		},
-		{
-			op:          instanceOpDelete,
-			deleteIndex: 0,
-		},
-	}
-	assert.Equal(t, 1, copyCount)
-	assert.Equal(t, 2, len(instancesToCopy)-copyCount)
-	assert.Equal(t, expected, instancesToCopy)
-
-	_, _, err = prepareInstanceOps(list, sourceInstances, &Options{Instances: []digest.Digest{sourceInstances[1]}, ImageListSelection: CopySpecificImages, ForceCompressionFormat: true}, "")
-	require.EqualError(t, err, "cannot use ForceCompressionFormat with undefined default compression format")
 }
 
 // Test `instanceOpClone` cases.
