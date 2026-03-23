@@ -10,7 +10,6 @@ const (
 	nodev      = "nodev"
 	trueString = "true"
 	s100       = "100"
-	s200       = "200"
 )
 
 func searchOptions(options []string, value string) bool {
