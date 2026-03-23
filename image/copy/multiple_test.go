@@ -68,6 +68,29 @@ func TestPrepareInstanceOpsForInstanceCopy(t *testing.T) {
 			},
 			expectedCopyCount: 1,
 		},
+		{ // Copying an empty image
+			instanceDigests:   []digest.Digest{},
+			options:           Options{},
+			expectedOps:       []instanceOp{},
+			expectedCopyCount: 0,
+		},
+		{ // Copying an empty image, with stripping, still OK
+			instanceDigests:   []digest.Digest{},
+			options:           Options{SparseManifestListAction: StripSparseManifestList},
+			expectedOps:       []instanceOp{},
+			expectedCopyCount: 0,
+		},
+		{ // A sparse copy that does not copy any instance from a non-empty image
+			instanceDigests:   sourceInstances,
+			options:           Options{Instances: []digest.Digest{}, ImageListSelection: CopySpecificImages},
+			expectedOps:       []instanceOp{},
+			expectedCopyCount: 0,
+		},
+		{ // Stripping a non-empty image to empty
+			instanceDigests: sourceInstances,
+			options:         Options{Instances: []digest.Digest{}, ImageListSelection: CopySpecificImages, SparseManifestListAction: StripSparseManifestList},
+			expectedError:   "would create an empty image",
+		},
 		{
 			instanceDigests: sourceInstances,
 			options:         Options{Instances: []digest.Digest{sourceInstances[1]}, ImageListSelection: CopySpecificImages, ForceCompressionFormat: true},
