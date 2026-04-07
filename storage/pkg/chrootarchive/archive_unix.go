@@ -10,7 +10,6 @@ import (
 	"io"
 	"io/fs"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -24,6 +23,15 @@ import (
 type unpackDestination struct {
 	root *os.File
 	dest string
+}
+
+type ErrorDetail struct {
+	Message string `json:"message"`
+	Errno   int    `json:"errno"`
+}
+
+func (e *ErrorDetail) Error() string {
+	return fmt.Sprintf("errno %d: %s", e.Errno, e.Message)
 }
 
 func (dst *unpackDestination) Close() error {
@@ -84,8 +92,12 @@ func untar() {
 
 	if err := archive.Unpack(os.Stdin, dst, &options); err != nil {
 		if errors.Is(err, unix.ENOSPC) {
-			fmt.Fprint(os.Stderr, err)
-			os.Exit(int(unix.ENOSPC))
+			enospcLog := ErrorDetail{
+				Message: "no space left on device",
+				Errno: int(unix.ENOSPC),
+			}
+			json.NewEncoder(os.Stderr).Encode(enospcLog)
+			os.Exit(1)
 		}
 		fatal(err)
 	}
@@ -160,17 +172,11 @@ func invokeUnpack(decompressedArchive io.Reader, dest *unpackDestination, option
 	w.Close()
 
 	if err := cmd.Wait(); err != nil {
-		if exitErr, ok := err.(*exec.ExitError); ok {
-			exitCode := exitErr.ExitCode()
-			if exitCode == int(unix.ENOSPC) {
-				procPath := fmt.Sprintf("/proc/self/fd/%d", dest.root.Fd())
+		var eDetail ErrorDetail
 
-				path, err := os.Readlink(procPath)
-
-				if err == nil {
-					fmt.Fprintf(os.Stderr, "no space left on device: %s\n", path)
-					os.Exit(28)
-				}
+		if json.Unmarshal(output.Bytes(), &eDetail) == nil {
+			if eDetail.Errno == int(unix.ENOSPC) {
+				return fmt.Errorf("%w", &eDetail)
 			}
 		}
 

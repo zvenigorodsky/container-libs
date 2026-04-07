@@ -16,6 +16,7 @@ import (
 	"go.podman.io/image/v5/transports"
 	"go.podman.io/image/v5/types"
 	"go.podman.io/storage/pkg/fileutils"
+	"go.podman.io/storage/pkg/chrootarchive"
 )
 
 type LoadOptions struct {
@@ -110,6 +111,13 @@ func (r *Runtime) Load(ctx context.Context, path string, options *LoadOptions) (
 			return loadedImages, err
 		}
 		logrus.Debugf("Error loading %s (%s): %v", path, transportName, err)
+
+		var eDetail *chrootarchive.ErrorDetail 
+
+		if errors.As(err, &eDetail) {
+			return nil, fmt.Errorf("%s", eDetail.Message)
+		}
+		
 		loadErrors = append(loadErrors, fmt.Errorf("%s: %v", transportName, err))
 	}
 
