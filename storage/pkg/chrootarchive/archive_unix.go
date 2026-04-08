@@ -10,6 +10,7 @@ import (
 	"io"
 	"io/fs"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -23,15 +24,6 @@ import (
 type unpackDestination struct {
 	root *os.File
 	dest string
-}
-
-type ErrorDetail struct {
-	Message string `json:"message"`
-	Errno   int    `json:"errno"`
-}
-
-func (e *ErrorDetail) Error() string {
-	return fmt.Sprintf("errno %d: %s", e.Errno, e.Message)
 }
 
 func (dst *unpackDestination) Close() error {
@@ -92,12 +84,7 @@ func untar() {
 
 	if err := archive.Unpack(os.Stdin, dst, &options); err != nil {
 		if errors.Is(err, unix.ENOSPC) {
-			enospcLog := ErrorDetail{
-				Message: "no space left on device",
-				Errno: int(unix.ENOSPC),
-			}
-			json.NewEncoder(os.Stderr).Encode(enospcLog)
-			os.Exit(1)
+			os.Exit(2)
 		}
 		fatal(err)
 	}
@@ -172,11 +159,10 @@ func invokeUnpack(decompressedArchive io.Reader, dest *unpackDestination, option
 	w.Close()
 
 	if err := cmd.Wait(); err != nil {
-		var eDetail ErrorDetail
-
-		if json.Unmarshal(output.Bytes(), &eDetail) == nil {
-			if eDetail.Errno == int(unix.ENOSPC) {
-				return fmt.Errorf("%w", &eDetail)
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			status := exitErr.ExitCode()
+			if status == 2 {
+				return unix.ENOSPC
 			}
 		}
 

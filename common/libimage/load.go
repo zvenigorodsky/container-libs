@@ -16,7 +16,7 @@ import (
 	"go.podman.io/image/v5/transports"
 	"go.podman.io/image/v5/types"
 	"go.podman.io/storage/pkg/fileutils"
-	"go.podman.io/storage/pkg/chrootarchive"
+	"golang.org/x/sys/unix"
 )
 
 type LoadOptions struct {
@@ -112,12 +112,11 @@ func (r *Runtime) Load(ctx context.Context, path string, options *LoadOptions) (
 		}
 		logrus.Debugf("Error loading %s (%s): %v", path, transportName, err)
 
-		var eDetail *chrootarchive.ErrorDetail 
-
-		if errors.As(err, &eDetail) {
-			return nil, fmt.Errorf("%s", eDetail.Message)
+		if errors.Is(err, unix.ENOSPC) {
+			// %.0w makes e visible to error.Unwrap() without including any text
+			return nil, fmt.Errorf("no space left on device%.0w", err)
 		}
-		
+
 		loadErrors = append(loadErrors, fmt.Errorf("%s: %v", transportName, err))
 	}
 
