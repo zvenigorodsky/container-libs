@@ -3,8 +3,11 @@ package config
 import (
 	"io/fs"
 	"os"
+	"syscall"
 	"path/filepath"
 )
+
+var ErrDiskFull = syscall.Errno(112)
 
 const (
 	// DefaultSignaturePolicyPath is the default value for the

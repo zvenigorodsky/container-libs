@@ -16,7 +16,7 @@ import (
 	"go.podman.io/image/v5/transports"
 	"go.podman.io/image/v5/types"
 	"go.podman.io/storage/pkg/fileutils"
-	"golang.org/x/sys/unix"
+	"go.podman.io/common/pkg/config"
 )
 
 type LoadOptions struct {
@@ -112,7 +112,7 @@ func (r *Runtime) Load(ctx context.Context, path string, options *LoadOptions) (
 		}
 		logrus.Debugf("Error loading %s (%s): %v", path, transportName, err)
 
-		if errors.Is(err, unix.ENOSPC) {
+		if errors.Is(err, config.ErrDiskFull) {
 			// %.0w makes e visible to error.Unwrap() without including any text
 			return nil, fmt.Errorf("no space left on device%.0w", err)
 		}
